@@ -1,0 +1,1 @@
+search_result['562']=["topic_000000000000011F_overloads--.html","STexture Constructor","Main constructor. If the texture uses the alpha channel, the image is serialized as PNG."];

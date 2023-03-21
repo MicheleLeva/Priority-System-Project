@@ -1,0 +1,1 @@
+search_result['35']=["topic_0000000000000014.html","KeepConnectionAlive Class","Keeps alive the connection between the Server and the Clients, by making the Client moving when the RTT is frozen."];

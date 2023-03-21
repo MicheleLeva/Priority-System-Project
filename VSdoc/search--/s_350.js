@@ -1,0 +1,1 @@
+search_result['350']=["topic_00000000000000B4.html","SyncData.StringData Property","Get data as plain string."];

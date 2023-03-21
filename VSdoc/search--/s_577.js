@@ -1,0 +1,1 @@
+search_result['577']=["topic_0000000000000124.html","Ids.GetID (NetObject) Method","Get object identification code (used for gameObjects)."];

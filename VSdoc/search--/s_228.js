@@ -1,0 +1,1 @@
+search_result['228']=["topic_000000000000007B.html","CollidersCreator Class","Initialize frustum collider and objects detector. Keep updated the zones\u0027 radius according to\r\nthe registered RTT."];

@@ -1,0 +1,1 @@
+var breadcrumbs=[['-1',"",""],['2',"Assembly-CSharp Reference","topic_0000000000000144.html"],['277',"Serializers Namespace","topic_00000000000000F7.html"],['278',"SComponent Class","topic_00000000000000F8.html"],['279',"Properties","topic_00000000000000F8_props--.html"],['280',"Id Property","topic_00000000000000FA.html"]];

@@ -1,0 +1,1 @@
+search_result['247']=["topic_0000000000000084.html","SendObjectsLoop Class","Class that contains the loop to send the initial information of the objects to the Clients."];

@@ -1,0 +1,1 @@
+search_result['141']=["topic_000000000000004C.html","ComponentClientHttp.GetComponentFromHttpServer Method","Make a request for a component to the Server"];

@@ -1,0 +1,1 @@
+search_result['341']=["topic_00000000000000B0.html","BaseSyncClient.TryApplySync Method","Apply the given sync data to the object, if the data class matches."];

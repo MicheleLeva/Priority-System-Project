@@ -1,0 +1,1 @@
+search_result['368']=["topic_00000000000000BC.html","SyncColor.UpdateConditions Method","Check if the conditions to update a specific property are respected\r\n(e.g. if an object has moved more that a certain threshold)."];

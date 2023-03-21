@@ -1,0 +1,1 @@
+search_result['195']=["topic_0000000000000069.html","PlayerFrustumCollider Class","Frustum collider component, linked to each Client\u0027s Avatar.\r\nIt has the purpose to keep updated the number of Clients that are facing each object."];

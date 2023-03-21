@@ -1,0 +1,1 @@
+search_result['253']=["topic_0000000000000085.html","ServerCache Class","Cache of serialized objects on the Server.\r\nThe cache is populated when the objects are sent to a Client, and used to sync objects\u0027 properties."];

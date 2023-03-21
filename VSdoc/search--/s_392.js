@@ -1,0 +1,1 @@
+search_result['392']=["topic_00000000000000C5.html","SyncLight.BeforeStart Method","Operations preliminary to the BaseSync.Start method."];

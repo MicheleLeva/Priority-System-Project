@@ -1,0 +1,1 @@
+search_result['295']=["topic_0000000000000096.html","IAction Class","Abstract class that represents a possible action that Clients can operate on the objects."];

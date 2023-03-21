@@ -1,0 +1,1 @@
+search_result['613']=["topic_0000000000000132.html","TwoHandsInteractable.OnSelectEntered Method","When the first hand selects the object, the pivot is positioned on the hand,\r\nthen the pivot is settled as parent of the object, to make it follow.\r\nWhen the second hand selects the object, the pivot ..."];

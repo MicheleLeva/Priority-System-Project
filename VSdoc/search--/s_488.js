@@ -1,0 +1,1 @@
+search_result['488']=["topic_00000000000000F8.html","SComponent Class","Serializable object\u0027s component (or asset).\r\nThe component is serialized as JSON string, and then bytes before being sent to the Clients."];

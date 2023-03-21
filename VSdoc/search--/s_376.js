@@ -1,0 +1,1 @@
+search_result['376']=["topic_00000000000000BF.html","SyncColorClient.TryApplySync Method","Apply the given sync data to the object, if the data class matches."];

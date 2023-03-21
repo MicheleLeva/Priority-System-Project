@@ -1,0 +1,1 @@
+search_result['606']=["topic_0000000000000130.html","TwoHandsInteractable Class","Handles the interaction with the objects using two hands simultaneously.\r\nThe Class allows to rotate the objects in a natural way."];

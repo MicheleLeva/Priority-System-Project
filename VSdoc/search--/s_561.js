@@ -1,0 +1,1 @@
+search_result['561']=["topic_000000000000011F.html","STexture(Texture2D, Boolean) Constructor","Main constructor. If the texture uses the alpha channel, the image is serialized as PNG."];

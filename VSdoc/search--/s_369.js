@@ -1,0 +1,1 @@
+search_result['369']=["topic_00000000000000BD.html","SyncColorClient Class","Class to update material\u0027s colors changes on the Client."];

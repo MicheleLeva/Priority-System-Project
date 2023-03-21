@@ -1,0 +1,1 @@
+search_result['314']=["topic_000000000000009F.html","BaseSync Class","Base class for the Server\u0027s sync components. Each specific component class is responsible to update the Clients\r\nwhen a property of the objects is changed."];

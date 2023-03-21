@@ -1,0 +1,1 @@
+search_result['342']=["topic_00000000000000B1.html","BaseSyncClient.SetOwnership Method","Ask the Server to give the ownership to the local Client."];

@@ -1,0 +1,1 @@
+search_result['498']=["topic_00000000000000FD.html","SComponent.Serialize Method","Serialize the component to JSON and convert it in bytes."];

@@ -1,0 +1,1 @@
+var breadcrumbs=[['-1',"",""],['2',"Assembly-CSharp Reference","topic_0000000000000144.html"],['332',"Utils Namespace","topic_00000000000000DD.html"],['344',"SColor32 Class","topic_00000000000000DE.html"],['345',"Methods","topic_00000000000000DE_methods--.html"],['347',"Implicit Conversion (SColor32 to Color32) Operator","topic_00000000000000E3.html"]];

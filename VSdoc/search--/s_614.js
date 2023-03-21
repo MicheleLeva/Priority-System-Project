@@ -1,0 +1,1 @@
+search_result['614']=["topic_0000000000000133.html","TwoHandsInteractable.OnSelectExited Method","When both the hands leave the object, the hierarchy is restored, making the pivot child of the object.\r\nWhen only one hand leave the object, the pivot is settled to the remaining hand."];

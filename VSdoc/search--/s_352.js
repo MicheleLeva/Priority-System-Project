@@ -1,0 +1,1 @@
+search_result['352']=["topic_00000000000000B6.html","ColorData Structure","Structure that contains color properties."];

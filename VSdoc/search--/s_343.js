@@ -1,0 +1,1 @@
+search_result['343']=["topic_00000000000000B2.html","SyncData Class","Serializable data class that represents a generic object\u0027s properties set."];

@@ -1,0 +1,1 @@
+var breadcrumbs=[['-1',"",""],['2',"Assembly-CSharp Reference","topic_0000000000000144.html"],['205',"Network.Sync Namespace","topic_000000000000009E.html"],['249',"SyncLightClient Class","topic_00000000000000C8.html"],['250',"Methods","topic_00000000000000C8_methods--.html"],['253',"TryApplySync Method","topic_00000000000000CB.html"]];
