@@ -39,7 +39,7 @@ namespace Utils {
                 // (facing) * FacingFactor // players facing
             );
 
-            Debug.Log($"PRIORITY: D: {distance} \tLV: {level} \tP:{priority} ");
+            //Debug.Log($"PRIORITY: D: {distance} \tLV: {level} \tP:{priority} ");
 
             return priority;
         }

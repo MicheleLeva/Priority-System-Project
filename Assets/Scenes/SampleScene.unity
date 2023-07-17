@@ -1257,7 +1257,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1455e68a19b9424aa64500ac59fcaeb8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  address: 192.168.1.6
+  address: 192.168.1.3
   port: 7778
 --- !u!1 &355151134
 GameObject:
@@ -2405,7 +2405,7 @@ MonoBehaviour:
   clientFps: 0
   serverFps: 0
   clientScreen: 1
-  objTimes: 1
+  objTimes: 0
   move: 0
   cube: {fileID: 0}
 --- !u!4 &784726146
@@ -2753,6 +2753,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02baf3fc5d191fe4387a75464993e3c7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  priorityType: 1
 --- !u!114 &972966159
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2933,8 +2934,8 @@ MonoBehaviour:
   m_MaxConnectAttempts: 60
   m_DisconnectTimeoutMS: 100000
   ConnectionData:
-    Address: 192.168.1.6
-    Port: 7777
+    Address: 192.168.1.3
+    Port: 7778
     ServerListenAddress: 0.0.0.0
   DebugSimulator:
     PacketDelayMS: 0
@@ -5049,7 +5050,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_UiScaleMode: 0
+  m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
   m_ReferenceResolution: {x: 800, y: 600}

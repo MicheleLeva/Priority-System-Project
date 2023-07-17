@@ -27,6 +27,16 @@ namespace Network.Player {
         private ulong _clientId;
         private Prefs _prefs;
 
+        private HashSet<NetObject> frustumCollidingObjects = new HashSet<NetObject>();
+
+        public enum PriorityType
+        {
+            CircularAreasOfInterest,
+            ScreenPresence
+        };
+
+        public PriorityType priorityType = PriorityType.CircularAreasOfInterest;
+
         /// <summary>
         /// Instantiate and attach a new <see cref="PlayerObjectsDetector"/>.
         /// </summary>
@@ -39,18 +49,22 @@ namespace Network.Player {
             GameObject where,
             SendObjectQueue objectQueue,
             int level,
-            ulong clientId) {
+            ulong clientId,
+            PriorityType pType = PriorityType.CircularAreasOfInterest) {
             // _
             var coll = where.AddComponent<PlayerObjectsDetector>();
             coll._objectQueue = objectQueue;
             coll._level = level;
             coll.radius = Prefs.Singleton.zones[level];
             coll._clientId = clientId;
+            coll.priorityType = pType;
             return coll;
         }
 
         private void Start() {
             _prefs = Prefs.Singleton;
+
+
             StartCoroutine(ObjectsDetectionCycle());
         }
 
@@ -72,24 +86,67 @@ namespace Network.Player {
         /// If some object exited the AoI, then remove it from the queue.
         /// </summary>
         private void DetectObjects() {
-            var t = transform;
+            if (priorityType.Equals(PriorityType.CircularAreasOfInterest))
+            {
+                var t = transform;
 
-            // Get colliding objects with right priority
-            var colliders = Physics.OverlapSphere(t.position, radius)
-                .Where(c =>
-                    c.TryGetComponent<NetObject>(out var o)
-                    && (!_prefs.priorityQueue || o.priority == _level))
-                .Select(c =>
-                    c.GetComponent<NetObject>())
-                .ToArray();
+                // Get colliding objects with right priority
+                var collidingObjects = Physics.OverlapSphere(t.position, radius)
+                    .Where(c =>
+                        c.TryGetComponent<NetObject>(out var o)
+                        && (!_prefs.priorityQueue || o.priority == _level))
+                    .Select(c =>
+                        c.GetComponent<NetObject>())
+                    .ToArray();
 
-            var selected = colliders.Except(_previous).ToList();
-            SendNewObjects(selected);
-            var removed = _previous.Except(colliders).ToList();
-            DeleteOldObjects(removed);
+                var selected = collidingObjects.Except(_previous).ToList();
+                SendNewObjects(selected);
+                var removed = _previous.Except(collidingObjects).ToList();
+                Debug.Log("selected = " + selected.Count + "; removed = " + removed.Count);
+                DeleteOldObjects(removed);
 
-            // Update `previous` list
-            _previous = colliders.ToList();
+                // Update `previous` list
+                _previous = collidingObjects.ToList();
+            }
+            else if (priorityType.Equals(PriorityType.ScreenPresence))
+            {
+                //TODO: test this
+                var selected = frustumCollidingObjects.Except(_previous).ToList();
+                SendNewObjects(selected);
+                var removed = _previous.Except(frustumCollidingObjects).ToList();
+                DeleteOldObjects(removed);
+
+                // Update `previous` list
+                _previous = frustumCollidingObjects.ToList();
+                //TODO: set their priority depending on screen presence
+                //TODO: add them to the queue once at a time
+            }
+            
+        }
+
+        /// <summary>
+        /// If a NetObjects collides with the frustum collider, it gets added to the global list frustumCollidingObjects
+        /// </summary>
+        /// <param name="collision">Object collided</param>
+        private void OnCollisionEnter(Collision collision)
+        {
+            //TODO: find another way to get objects inside of mesh at initialization!
+            Debug.Log("Collision!");
+            if (priorityType.Equals(PriorityType.ScreenPresence))
+            {
+                if(collision.gameObject.TryGetComponent<NetObject>(out var o))
+                frustumCollidingObjects.Add(o);
+            }
+        }
+
+        private void OnTriggerEnter(Collider other)
+        {
+            Debug.Log("Collision!");
+            if (priorityType.Equals(PriorityType.ScreenPresence))
+            {
+                if (other.gameObject.TryGetComponent<NetObject>(out var o))
+                    frustumCollidingObjects.Add(o);
+            }
         }
 
         /// <summary>

@@ -22,14 +22,14 @@ namespace Network.Server {
                 NetworkManager.Singleton.OnClientDisconnectCallback +=
                     client => _objectQueue.RemoveClient(client);
 
-                StartCoroutine(Loop());
+                StartCoroutine(SendObjectLoop());
             };
         }
 
         /// <summary>
         /// Each cycle, get the first element of the queue and send it.
         /// </summary>
-        private IEnumerator Loop() {
+        private IEnumerator SendObjectLoop() {
             var sm = FindObjectOfType<SpawnManager>();
             while (true) {
                 foreach (var client in _objectQueue.Clients) {
