@@ -1,3 +1,4 @@
+using Network.Objects;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -7,11 +8,14 @@ namespace Network.Server {
     /// </summary>
     [RequireComponent(typeof(SendObjectQueue))]
     public class ServerObjectsLoader : NetworkBehaviour {
+
+        public GameObject world;
+
         private void Start() {
             NetworkManager.OnServerStarted += () => {
                 var resources = Resources.LoadAll<GameObject>("Env");
                 foreach (var res in resources) {
-                    Instantiate(res);
+                    Instantiate(res, world.GetComponent<Transform>());
                 }
             };
         }

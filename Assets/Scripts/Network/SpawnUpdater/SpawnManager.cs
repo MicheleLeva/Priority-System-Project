@@ -26,6 +26,8 @@ namespace Network.SpawnUpdater {
         private readonly ClientCache _clientCache = ClientCache.Singleton;
         private readonly ServerCache _serverCache = ServerCache.Singleton;
 
+        private Transform _worldTransform;
+
         // ----------------------------------------------------------------------------
         // Server
         // ----------------------------------------------------------------------------
@@ -34,6 +36,8 @@ namespace Network.SpawnUpdater {
                 Debug.Log("Server Started");
                 componentServerHttp.StartServer();
             };
+
+            _worldTransform = GameObject.Find("World").transform;
         }
 
         /// <summary>
@@ -118,6 +122,9 @@ namespace Network.SpawnUpdater {
                 AttachComponentToObject(id, sObj);
             }
 
+            //Set World object as parent
+            if (sObj.Parent == 0) sObj.Obj.transform.SetParent(_worldTransform);
+            
             sObj.Obj.SetActive(true);
         }
 
@@ -170,7 +177,7 @@ namespace Network.SpawnUpdater {
                 yield return new WaitForSeconds(delay);
             }
 
-            Debug.Log("Parent of object " + objTransform.gameObject.name + "has been found!");
+            //Debug.Log("Parent of object " + objTransform.gameObject.name + "has been found!");
 
             objTransform.parent = _clientCache[parent].Obj.transform;
             // Re-adjust scale
