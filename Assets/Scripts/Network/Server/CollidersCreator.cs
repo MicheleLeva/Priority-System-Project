@@ -21,8 +21,6 @@ namespace Network.Server {
 
         private PlayerObjectsDetector _c0, _c1, _c2;
 
-        public PlayerObjectsDetector.PriorityType priorityType = PlayerObjectsDetector.PriorityType.CircularAreasOfInterest;
-
         private void Start() {
             _transport = (UnityTransport) NetworkManager.Singleton.NetworkConfig.NetworkTransport;
             NetworkManager.OnServerStarted += () => {
@@ -42,13 +40,13 @@ namespace Network.Server {
         private void OnClientConnected(ulong clientId) {
             var player = NetworkManager.ConnectedClients[clientId].PlayerObject;
             var head = player.transform.GetChild(0);
-            if(priorityType.Equals(PlayerObjectsDetector.PriorityType.CircularAreasOfInterest))
+            if(Prefs.Singleton.priorityType.Equals(Prefs.PriorityType.CircularAreasOfInterest))
                 InitRingsColliders(head, clientId);
             InitFrustumCollider(head, clientId);
             
             if (Prefs.Singleton.priorityQueue)
             {
-                if(priorityType.Equals(PlayerObjectsDetector.PriorityType.CircularAreasOfInterest))
+                if(Prefs.Singleton.priorityType.Equals(Prefs.PriorityType.CircularAreasOfInterest))
                     StartCoroutine(ResizeRadiusCycle(clientId));
             }
                 
@@ -114,8 +112,8 @@ namespace Network.Server {
             // add frustum script
             goFrustum.AddComponent<PlayerFrustumCollider>();
             //add player object detector script to frustum collider
-            if (priorityType.Equals(PlayerObjectsDetector.PriorityType.ScreenPresence))
-                PlayerObjectsDetector.CreateComponent(goFrustum, _objectQueue, 2, clientId, PlayerObjectsDetector.PriorityType.ScreenPresence);
+            if (Prefs.Singleton.priorityType.Equals(Prefs.PriorityType.ScreenPresence))
+                PlayerObjectsDetector.CreateComponent(goFrustum, _objectQueue, 2, clientId, Prefs.PriorityType.ScreenPresence);
             var rb = goFrustum.AddComponent<Rigidbody>();
             rb.isKinematic = true;
         }

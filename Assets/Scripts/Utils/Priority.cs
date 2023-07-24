@@ -44,6 +44,12 @@ namespace Utils {
             return priority;
         }
 
+        public static int CalcWithScreenPresence(double screenPresence, double distance)
+        {
+            int priority = (int)(distance * (1 - screenPresence));
+            return priority;
+        }
+
         static double Gauss(double x, double mu, double sigma) {
             return Math.Exp(-((x - mu) * (x - mu)) / (2 * sigma * sigma)) / Math.Sqrt(2 * Math.PI * sigma * sigma);
         }

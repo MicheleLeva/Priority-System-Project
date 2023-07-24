@@ -1,8 +1,10 @@
-﻿using System;
+﻿using Network.Player;
+using System;
 using System.Collections.Generic;
 using TMPro;
 using Unity.Netcode;
 using Unity.VisualScripting;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -38,6 +40,23 @@ namespace Network {
         /// Send objects only in the Area of Interest of the player
         /// </summary>
         public bool aoi = true;
+
+        /// <summary>
+        /// Priority enqueuing types:
+        /// Circular Areas of Interest: objects are enqueued using 3 different circular AoIs, high priority object are loaded
+        /// even in further areas
+        /// Screen Presence: obly visible objects from the client side are enqueued with priority depending on how much space their
+        /// bounding volumes occupy on screen
+        /// </summary>
+        public enum PriorityType
+        {
+            CircularAreasOfInterest,
+            ScreenPresence
+        };
+
+        public PriorityType priorityType = PriorityType.CircularAreasOfInterest;
+
+        public Dropdown priorityTypeDropdown;
 
         private void Start() {
             NetworkManager.Singleton.OnServerStarted += () => {
@@ -78,6 +97,15 @@ namespace Network {
         /// </summary>
         /// <param name="t">GUI value</param>
         public static void ToggleAoI(bool t) => Singleton.aoi = t;
+
+        /// <summary>
+        /// Event callback for priorityType selection
+        /// </summary>
+        /// <param name="newValue"></param>
+        public void PriorityTypeValueChanged(int newValue)
+        {
+            priorityType = (PriorityType)newValue;
+        }
     }
 
 }

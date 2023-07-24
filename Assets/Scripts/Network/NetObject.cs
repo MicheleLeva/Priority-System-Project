@@ -118,5 +118,14 @@ namespace Network.Objects {
                 GetComponent<MeshRenderer>().material = levels[i];
             
         }
+
+        private void OnDrawGizmos()
+        {
+            if(TryGetComponent(out Renderer r) && facing.Count > 0)
+            {
+                Bounds b = r.bounds;
+                Gizmos.DrawWireCube(b.center, b.size);
+            }
+        }
     }
 }

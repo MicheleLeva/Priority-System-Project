@@ -59,6 +59,7 @@ public class Logger : MonoBehaviour {
         if (serverFps) {
             _transport = (UnityTransport) NetworkManager.Singleton.NetworkConfig.NetworkTransport;
             Directory.CreateDirectory(_dir);
+            _logFpsFile = "log_fps.csv";
             CreateFile("log_fps.csv");
 
             NetworkManager.Singleton.OnServerStarted += () =>

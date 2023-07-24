@@ -117,8 +117,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: 0
   priority: 1
-  movable: 0
-  facing: 0
+  isMovable: 0
   owner: 0
 --- !u!1 &4273912462028170179
 GameObject:
@@ -219,8 +218,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: 0
   priority: 2
-  movable: 0
-  facing: 0
+  isMovable: 0
   owner: 0
 --- !u!65 &4725208010854859657
 BoxCollider:
@@ -334,8 +332,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: 0
   priority: 2
-  movable: 0
-  facing: 0
+  isMovable: 0
   owner: 0
 --- !u!65 &3882626932387255287
 BoxCollider:
@@ -449,8 +446,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: 0
   priority: 2
-  movable: 0
-  facing: 0
+  isMovable: 0
   owner: 0
 --- !u!65 &8574417797342926656
 BoxCollider:
@@ -564,8 +560,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: 0
   priority: 2
-  movable: 0
-  facing: 0
+  isMovable: 0
   owner: 0
 --- !u!65 &5127411013420527234
 BoxCollider:
