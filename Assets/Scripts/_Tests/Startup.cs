@@ -8,6 +8,8 @@ using Application = UnityEngine.Application;
 public class Startup : MonoBehaviour {
     public static int ShowOnlyPriority = -1;
 
+    public TMPro.TMP_Dropdown priorityTypeDropdown;
+
     private void Start() {
         try {
             var mode = GetArg("-mode");
@@ -46,6 +48,26 @@ public class Startup : MonoBehaviour {
         }
         catch {
             Debug.Log("[Settings] no delay: default 0.06s");
+        }
+
+        try
+        {
+            string priorityType = GetArg("-priorityType");
+            if (priorityType.Equals("aoi"))
+            {
+                Prefs.Singleton.PriorityTypeValueChanged(0);
+                priorityTypeDropdown.value = 0;
+            }
+            else
+            {
+                Prefs.Singleton.PriorityTypeValueChanged(1);
+                priorityTypeDropdown.value = 1;
+            }
+                
+        }
+        catch
+        {
+            Debug.Log("[Settings] Priority type not set from args");
         }
     }
 

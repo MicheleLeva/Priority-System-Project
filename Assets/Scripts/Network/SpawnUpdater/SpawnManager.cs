@@ -207,10 +207,12 @@ namespace Network.SpawnUpdater {
                 _componentsCache.SetComp(compId, sComponent);
                 sComponent.AttachTo(sObj);
 
+                string time = Time.time.ToString("f3").Replace(',', '.');
+                string delays = Logger.ObjDelays[sObj.Id].ToString("f3").Replace(',', '.');
                 if (Logger.ObjTimes)
                     Logger.ObjTimesStr +=
-                        $"{Logger.ObjDelays[sObj.Id]:f3}, " +
-                        $"{Time.time:f3}, " +
+                        $"{delays}, " +
+                        $"{time}, " +
                         $"{sObj.Name}, " +
                         $"{sObj.Priority}, " +
                         $"{sComponent.GetType()}, " +
