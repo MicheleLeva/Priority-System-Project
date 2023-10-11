@@ -101,21 +101,40 @@ namespace Network.Server {
                 }
             };
             // add camera frustum as collider
-            var coll = goFrustum.AddComponent<MeshCollider>();
-            coll.sharedMesh = (
+            var frustumCollider = goFrustum.AddComponent<MeshCollider>();
+            frustumCollider.sharedMesh = (
                     client.PlayerObject.GetComponentInChildren<Camera>()
                     ?? Camera.main
                 )
                 .GenerateFrustumMesh(100);
-            coll.convex = true;
-            coll.isTrigger = true;
+            frustumCollider.convex = true;
+            frustumCollider.isTrigger = true;
             // add frustum script
             goFrustum.AddComponent<PlayerFrustumCollider>();
             //add player object detector script to frustum collider
             if (Prefs.Singleton.priorityType.Equals(Prefs.PriorityType.ScreenPresence))
-                PlayerObjectsDetector.CreateComponent(goFrustum, _objectQueue, 2, clientId, Prefs.PriorityType.ScreenPresence);
+            {
+                StartCoroutine(EnablePlayerObjectsDetector(goFrustum, clientId, frustumCollider));
+
+            }      
             var rb = goFrustum.AddComponent<Rigidbody>();
             rb.isKinematic = true;
+        }
+
+        /// <summary>
+        /// Used as a coroutine to delay the initialization of the playerObjectsDetector
+        /// It avoids client player objects jittering
+        /// </summary>
+        private IEnumerator EnablePlayerObjectsDetector(GameObject goFrustum, ulong clientId, Collider coll)
+        {
+            yield return new WaitForSeconds(20);
+            Debug.Log("PlayerObjectsDetector for client " + clientId + "is now enabled.");
+            PlayerObjectsDetector pod =
+                    PlayerObjectsDetector.CreateComponent(goFrustum, _objectQueue, 2, clientId, Prefs.PriorityType.ScreenPresence);
+
+            //reset collider to get new collision triggers
+            coll.enabled = false;
+            coll.enabled = true;
         }
 
         // -------------------> Update Radius CYCLE

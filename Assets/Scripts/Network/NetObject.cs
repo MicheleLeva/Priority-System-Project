@@ -29,6 +29,10 @@ namespace Network.Objects {
         /// client that owns this object
         /// </summary>
         public ulong owner;
+        /// <summary>
+        /// Has the object been sent to at least one client?
+        /// </summary>
+        public bool isSentToClient = false;
 
         private void Start() {
             if (NetworkManager.Singleton.IsServer) {
@@ -121,7 +125,8 @@ namespace Network.Objects {
 
         private void OnDrawGizmos()
         {
-            if(TryGetComponent(out Renderer r) && facing.Count > 0)
+            //if(TryGetComponent(out Renderer r) && facing.Count > 0)
+            if(TryGetComponent(out Renderer r) && isSentToClient)
             {
                 Bounds b = r.bounds;
                 Gizmos.DrawWireCube(b.center, b.size);

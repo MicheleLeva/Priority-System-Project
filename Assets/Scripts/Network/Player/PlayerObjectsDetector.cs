@@ -8,6 +8,7 @@ using Unity.Netcode;
 using Unity.Netcode.Transports.UTP;
 using UnityEngine;
 using Utils;
+using static UnityEngine.UI.GridLayoutGroup;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -30,6 +31,7 @@ namespace Network.Player {
         private Prefs _prefs;
 
         private HashSet<NetObject> frustumCollidingObjects = new HashSet<NetObject>();
+        private HashSet<NetObject> sentObjects = new HashSet<NetObject>();
         
         Prefs.PriorityType priorityType;
 
@@ -82,8 +84,11 @@ namespace Network.Player {
         }
 
         /// <summary>
+        /// -- Areas of Interest: 
         /// Using OverlapSphere function, detect objects in the AoI. Then, if the objects are new, enqueue them.
         /// If some object exited the AoI, then remove it from the queue.
+        /// -- Screen Presence:
+        /// Use Frustum Mesh Collider to find objects to enqueue.
         /// </summary>
         private void DetectObjects() {
             if (priorityType.Equals(Prefs.PriorityType.CircularAreasOfInterest))
@@ -111,13 +116,16 @@ namespace Network.Player {
             else if (priorityType.Equals(Prefs.PriorityType.ScreenPresence))
             {
                 var selected = frustumCollidingObjects.Except(_previous).ToList();
-                SendNewObjects(selected);
-                var removed = _previous.Except(frustumCollidingObjects).ToList();
-                DeleteOldObjects(removed);
+                if (selected.Count > 0)
+                {
+                    SendNewObjects(selected);
+                    var removed = _previous.Except(frustumCollidingObjects).ToList();
+                    DeleteOldObjects(removed);
 
-                // Update `previous` list
-                _previous = frustumCollidingObjects.ToList();
-               
+                    // Update `previous` list
+                    _previous = frustumCollidingObjects.ToList();
+                }
+
             }
             
         }
@@ -131,8 +139,20 @@ namespace Network.Player {
             //Debug.Log("Collision!");
             if (priorityType.Equals(Prefs.PriorityType.ScreenPresence))
             {
+                
                 if (other.gameObject.TryGetComponent<NetObject>(out var o))
-                    frustumCollidingObjects.Add(o);
+                {
+                    
+                    if (!IsObjectCompletelyOccluded(other.gameObject))
+                    {
+                        Debug.Log($"Checking object {o.name} --> not occluded");
+                        frustumCollidingObjects.Add(o);
+                    } else
+                        //Debug.Log($"Checking object {o.name} --> Occluded");
+                        Debug.Log($"Occluded");
+
+                }
+                    
             }
         }
 
@@ -149,6 +169,55 @@ namespace Network.Player {
             }
         }
 
+        
+        private bool IsObjectCompletelyOccluded(GameObject obj)
+        {
+            Vector3 playerPos = NetworkManager.Singleton.ConnectedClients[_clientId].PlayerObject.
+                GetComponentInChildren<Collider>().transform.position;
+            float distance = (playerPos - obj.transform.position).magnitude;
+
+            //get all corners of object AABB
+            Bounds bounds = obj.GetComponent<Renderer>().bounds;
+            Vector3[] corners = new Vector3[8];
+            corners[0] = bounds.min;
+            corners[1] = bounds.max;
+            corners[2] = new Vector3(corners[0].x, corners[0].y, corners[1].z);
+            corners[3] = new Vector3(corners[0].x, corners[1].y, corners[0].z);
+            corners[4] = new Vector3(corners[1].x, corners[0].y, corners[0].z);
+            corners[5] = new Vector3(corners[0].x, corners[1].y, corners[1].z);
+            corners[6] = new Vector3(corners[1].x, corners[0].y, corners[1].z);
+            corners[7] = new Vector3(corners[1].x, corners[1].y, corners[0].z);
+
+            //for each corners perform a raycast to player, if any reaches the player the object is not completely occluded --> false
+            Ray ray;
+            Color color = UnityEngine.Random.ColorHSV();
+            foreach(Vector3 corner in corners)
+            {
+                ray = new Ray(corner, playerPos - corner);
+                if (Physics.Raycast(ray, out RaycastHit hit, Vector3.Distance(corner, playerPos)))
+                {
+                    Debug.DrawRay(corner, (playerPos - corner).normalized * hit.distance, color, 120);
+                    //if the first object reached by the ray is the player then the object is not completely occluded
+                    if ((hit.collider.transform.position - playerPos).magnitude <= 2)
+                        return false;
+                }
+                    
+            }
+
+            //if all the corners are occluded but the center of the object is still visible, it is not completely occluded --> false
+            //otherwise it is completely occluded
+            //TODO (can corners and center of object be hidden but the object still not completely occluded?)
+            ray = new Ray(playerPos, obj.transform.position - playerPos);
+            if (Physics.Raycast(ray, out RaycastHit raycastHit, distance))
+            {
+                //if the first object reached by the ray is the player then the object is not completely occluded
+                if (raycastHit.collider.gameObject.layer == LayerMask.GetMask("Player"))
+                    return false;
+            }
+            return true;
+        }
+
+
         /// <summary>
         /// Add new objects to the queue.
         /// </summary>
@@ -157,6 +226,8 @@ namespace Network.Player {
 
             var playerPos = NetworkManager.Singleton.ConnectedClients[_clientId].PlayerObject.transform.GetChild(0)
                     .position;
+
+            Debug.Log($"Sending {selected.Count} objects to client {_clientId}");
 
             foreach (var networkObj in selected) {
 
@@ -232,6 +303,8 @@ namespace Network.Player {
 
                     _objectQueue.Add(_clientId, networkObj.gameObject, priority);
                 }
+
+                networkObj.isSentToClient = true;
             }
         }
 

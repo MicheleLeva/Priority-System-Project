@@ -1257,7 +1257,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1455e68a19b9424aa64500ac59fcaeb8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  address: 192.168.1.4
+  address: 192.168.1.12
   port: 7778
 --- !u!1 &355151134
 GameObject:
@@ -1563,7 +1563,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &473263762
 Transform:
   m_ObjectHideFlags: 0
@@ -3411,7 +3411,7 @@ MonoBehaviour:
   m_MaxConnectAttempts: 60
   m_DisconnectTimeoutMS: 100000
   ConnectionData:
-    Address: 192.168.1.4
+    Address: 192.168.1.12
     Port: 7778
     ServerListenAddress: 0.0.0.0
   DebugSimulator:
