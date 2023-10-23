@@ -127,7 +127,7 @@ namespace Network.Server {
         /// </summary>
         private IEnumerator EnablePlayerObjectsDetector(GameObject goFrustum, ulong clientId, Collider coll)
         {
-            yield return new WaitForSeconds(20);
+            yield return new WaitForSeconds(0);
             Debug.Log("PlayerObjectsDetector for client " + clientId + "is now enabled.");
             PlayerObjectsDetector pod =
                     PlayerObjectsDetector.CreateComponent(goFrustum, _objectQueue, 2, clientId, Prefs.PriorityType.ScreenPresence);

@@ -196,9 +196,9 @@ namespace Network.Player {
                 ray = new Ray(corner, playerPos - corner);
                 if (Physics.Raycast(ray, out RaycastHit hit, Vector3.Distance(corner, playerPos)))
                 {
-                    Debug.DrawRay(corner, (playerPos - corner).normalized * hit.distance, color, 120);
+                    //Debug.DrawRay(corner, (playerPos - corner).normalized * hit.distance, color, 120);
                     //if the first object reached by the ray is the player then the object is not completely occluded
-                    if ((hit.collider.transform.position - playerPos).magnitude <= 2)
+                    if ((hit.collider.transform.position - playerPos).magnitude <= 1)
                         return false;
                 }
                     
@@ -210,8 +210,9 @@ namespace Network.Player {
             ray = new Ray(playerPos, obj.transform.position - playerPos);
             if (Physics.Raycast(ray, out RaycastHit raycastHit, distance))
             {
+                //Debug.DrawRay(obj.transform.position, (playerPos - obj.transform.position).normalized * raycastHit.distance, color, 120);
                 //if the first object reached by the ray is the player then the object is not completely occluded
-                if (raycastHit.collider.gameObject.layer == LayerMask.GetMask("Player"))
+                if ((raycastHit.collider.transform.position - playerPos).magnitude <= 1)
                     return false;
             }
             return true;
@@ -298,8 +299,8 @@ namespace Network.Player {
 
                     int priority = Priority.CalcWithScreenPresence(screenPresencePercentage, distance);
 
-                    Debug.LogWarning($"{networkObj.name}: distance = {distance}, screenPresencePercentage = {screenPresencePercentage}" +
-                        $", Priority = {priority}");
+                    /*Debug.LogWarning($"{networkObj.name}: distance = {distance}, screenPresencePercentage = {screenPresencePercentage}" +
+                        $", Priority = {priority}");*/
 
                     _objectQueue.Add(_clientId, networkObj.gameObject, priority);
                 }
