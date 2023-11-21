@@ -125,8 +125,8 @@ namespace Network.Objects {
 
         private void OnDrawGizmos()
         {
-            //if(TryGetComponent(out Renderer r) && facing.Count > 0)
-            if(TryGetComponent(out Renderer r) && isSentToClient)
+            //Debug gizmo to determine which objects have already been sent to a client
+            if(TryGetComponent(out Collider r) && isSentToClient)
             {
                 Bounds b = r.bounds;
                 Gizmos.DrawWireCube(b.center, b.size);

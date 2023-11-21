@@ -9,6 +9,7 @@ using Unity.Netcode.Transports.UTP;
 using UnityEngine;
 using Utils;
 using static UnityEngine.UI.GridLayoutGroup;
+using Unity.VisualScripting;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -142,14 +143,16 @@ namespace Network.Player {
                 
                 if (other.gameObject.TryGetComponent<NetObject>(out var o))
                 {
-                    
-                    if (!IsObjectCompletelyOccluded(other.gameObject))
+                    frustumCollidingObjects.Add(o);
+                    /*
+                    if (IsObjectCompletelyOccluded(other.gameObject))
                     {
                         Debug.Log($"Checking object {o.name} --> not occluded");
-                        frustumCollidingObjects.Add(o);
+                        
                     } else
                         //Debug.Log($"Checking object {o.name} --> Occluded");
                         Debug.Log($"Occluded");
+                    */
 
                 }
                     
@@ -206,7 +209,6 @@ namespace Network.Player {
 
             //if all the corners are occluded but the center of the object is still visible, it is not completely occluded --> false
             //otherwise it is completely occluded
-            //TODO (can corners and center of object be hidden but the object still not completely occluded?)
             ray = new Ray(playerPos, obj.transform.position - playerPos);
             if (Physics.Raycast(ray, out RaycastHit raycastHit, distance))
             {
@@ -297,7 +299,11 @@ namespace Network.Player {
                     if (bottomLeftP.z < 0 && topRightP.z < 0)
                         Debug.LogError($"This object {networkObj.name} is behind the player!");
 
-                    int priority = Priority.CalcWithScreenPresence(screenPresencePercentage, distance);
+                    //Gets the distance of the object from the center of screen
+                    float distanceFromScreenCenterPercentage = DistanceFromScreenCenterPercentage(
+                        playerCamera.WorldToScreenPoint(obj.transform.position), playerCamera.pixelWidth, playerCamera.pixelHeight);
+
+                    int priority = Priority.CalcWithScreenPresence(screenPresencePercentage, distance, distanceFromScreenCenterPercentage);
 
                     /*Debug.LogWarning($"{networkObj.name}: distance = {distance}, screenPresencePercentage = {screenPresencePercentage}" +
                         $", Priority = {priority}");*/
@@ -307,6 +313,19 @@ namespace Network.Player {
 
                 networkObj.isSentToClient = true;
             }
+        }
+
+        /// <summary>
+        /// Calculates how long is the distance of the object from the center of screen in percentage of the max distance
+        /// </summary>
+        /// <returns></returns>
+        private float DistanceFromScreenCenterPercentage(Vector3 objectPositionOnScreen, float cameraWidth, float cameraHeight)
+        {
+            objectPositionOnScreen.z = 0; //depth is not needed
+            Vector3 centerOfScreen = new(cameraWidth / 2f, cameraHeight / 2f, 0);
+            float distance = Vector3.Distance(centerOfScreen, objectPositionOnScreen);
+            float maxDistance = Vector3.Distance(centerOfScreen, new Vector3(cameraWidth, cameraHeight));
+            return distance / maxDistance;
         }
 
         /// <summary>
