@@ -55,8 +55,8 @@ namespace Utils {
             //multiplication by 1000 is to distribute better the priorities with similar distance and screen presence
             int priority = (int)(distance * 1000f * (1f - screenPresence) * distanceFromScreenCenterPerc);
 
-            Debug.Log($"Calculating priority: distance {distance}, screenPresence {screenPresence}, " +
-                $"distanceFromScreenCenterPerc {distanceFromScreenCenterPerc} --> priority {priority}");
+            /*Debug.Log($"Calculating priority: distance {distance}, screenPresence {screenPresence}, " +
+                $"distanceFromScreenCenterPerc {distanceFromScreenCenterPerc} --> priority {priority}");*/
 
             return priority;
         }

@@ -31,7 +31,12 @@ namespace Network.Player {
         float screenArea;
         private Prefs _prefs;
 
+        /// <summary>
+        /// Hashsets used by ScreenPresence priority system
+        /// </summary>
+        //set of objects currently colliding with the frustumCollider
         private HashSet<NetObject> frustumCollidingObjects = new HashSet<NetObject>();
+        //set of objects already sent to the client
         private HashSet<NetObject> sentObjects = new HashSet<NetObject>();
         
         Prefs.PriorityType priorityType;
@@ -137,6 +142,9 @@ namespace Network.Player {
         /// <param name="collision">Object collided</param>
         private void OnTriggerEnter(Collider other)
         {
+            //TODO remove
+            //return;
+
             //Debug.Log("Collision!");
             if (priorityType.Equals(Prefs.PriorityType.ScreenPresence))
             {
@@ -160,11 +168,14 @@ namespace Network.Player {
         }
 
         /// <summary>
-        /// If a NetObjects collides with the frustum collider, it gets added to the global list frustumCollidingObjects
+        /// If a NetObjects stops colliding with the frustum collider, it gets removed from the global list frustumCollidingObjects
         /// </summary>
-        /// <param name="other">Object collided</param>
+        /// <param name="other">Object which stopped colliding</param>
         private void OnTriggerExit(Collider other)
         {
+            //TODO remove
+            //return;
+
             if (priorityType.Equals(Prefs.PriorityType.ScreenPresence))
             {
                 if (other.gameObject.TryGetComponent<NetObject>(out var o))
@@ -251,7 +262,7 @@ namespace Network.Player {
                 }
                 else if (priorityType.Equals(Prefs.PriorityType.ScreenPresence))
                 {
-                    //get object Axis-Aligned Bounding Box corners
+                    //get object Axis-Aligned Bounding Box corners of object to send
                     GameObject obj = networkObj.gameObject;
                     Bounds bounds = obj.GetComponent<Renderer>().bounds;
                     Vector3[] corners = new Vector3[8];
@@ -303,11 +314,13 @@ namespace Network.Player {
                     float distanceFromScreenCenterPercentage = DistanceFromScreenCenterPercentage(
                         playerCamera.WorldToScreenPoint(obj.transform.position), playerCamera.pixelWidth, playerCamera.pixelHeight);
 
+                    //calculate priority
                     int priority = Priority.CalcWithScreenPresence(screenPresencePercentage, distance, distanceFromScreenCenterPercentage);
 
                     /*Debug.LogWarning($"{networkObj.name}: distance = {distance}, screenPresencePercentage = {screenPresencePercentage}" +
                         $", Priority = {priority}");*/
 
+                    //enqueue object with calculated priority
                     _objectQueue.Add(_clientId, networkObj.gameObject, priority);
                 }
 
@@ -318,7 +331,7 @@ namespace Network.Player {
         /// <summary>
         /// Calculates how long is the distance of the object from the center of screen in percentage of the max distance
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Percentage of distance from screen center</returns>
         private float DistanceFromScreenCenterPercentage(Vector3 objectPositionOnScreen, float cameraWidth, float cameraHeight)
         {
             objectPositionOnScreen.z = 0; //depth is not needed

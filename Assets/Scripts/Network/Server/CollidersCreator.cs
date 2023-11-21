@@ -111,30 +111,15 @@ namespace Network.Server {
             frustumCollider.isTrigger = true;
             // add frustum script
             goFrustum.AddComponent<PlayerFrustumCollider>();
-            //add player object detector script to frustum collider
+            //add player object detector script to frustum collider if the priority type is Screen Presence
+            //(in priority type Areas of Interests the PlayerObjectsDetector is added in InitRingsColliders() function above)
             if (Prefs.Singleton.priorityType.Equals(Prefs.PriorityType.ScreenPresence))
             {
-                StartCoroutine(EnablePlayerObjectsDetector(goFrustum, clientId, frustumCollider));
+                PlayerObjectsDetector.CreateComponent(goFrustum, _objectQueue, 2, clientId, Prefs.PriorityType.ScreenPresence);
 
             }      
             var rb = goFrustum.AddComponent<Rigidbody>();
             rb.isKinematic = true;
-        }
-
-        /// <summary>
-        /// Used as a coroutine to delay the initialization of the playerObjectsDetector
-        /// It avoids client player objects jittering
-        /// </summary>
-        private IEnumerator EnablePlayerObjectsDetector(GameObject goFrustum, ulong clientId, Collider coll)
-        {
-            yield return new WaitForSeconds(0);
-            Debug.Log("PlayerObjectsDetector for client " + clientId + "is now enabled.");
-            PlayerObjectsDetector pod =
-                    PlayerObjectsDetector.CreateComponent(goFrustum, _objectQueue, 2, clientId, Prefs.PriorityType.ScreenPresence);
-
-            //reset collider to get new collision triggers
-            coll.enabled = false;
-            coll.enabled = true;
         }
 
         // -------------------> Update Radius CYCLE
