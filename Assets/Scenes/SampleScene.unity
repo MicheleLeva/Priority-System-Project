@@ -1257,7 +1257,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1455e68a19b9424aa64500ac59fcaeb8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  address: 192.168.1.4
+  address: 192.168.1.13
   port: 7778
 --- !u!1 &355151134
 GameObject:
@@ -2908,6 +2908,7 @@ MonoBehaviour:
   isMovable: 0
   owner: 0
   isSentToClient: 0
+  sphereSize: 0
 --- !u!4 &824728277
 Transform:
   m_ObjectHideFlags: 0
@@ -3412,7 +3413,7 @@ MonoBehaviour:
   m_MaxConnectAttempts: 60
   m_DisconnectTimeoutMS: 100000
   ConnectionData:
-    Address: 192.168.1.4
+    Address: 192.168.1.13
     Port: 7778
     ServerListenAddress: 0.0.0.0
   DebugSimulator:

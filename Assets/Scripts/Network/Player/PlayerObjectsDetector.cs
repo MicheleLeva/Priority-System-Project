@@ -28,6 +28,7 @@ namespace Network.Player {
         private List<NetObject> _previous = new();
         private ulong _clientId;
         private Camera playerCamera;
+        private Camera mainCamera;
         float screenArea;
         private Prefs _prefs;
 
@@ -38,7 +39,11 @@ namespace Network.Player {
         private HashSet<NetObject> frustumCollidingObjects = new HashSet<NetObject>();
         //set of objects already sent to the client
         private HashSet<NetObject> sentObjects = new HashSet<NetObject>();
-        
+
+        //culling group
+        CullingGroup localCullingGroup;
+        NetObject[] netObjectsInScene;
+
         Prefs.PriorityType priorityType;
 
         /// <summary>
@@ -65,15 +70,69 @@ namespace Network.Player {
             return coll;
         }
 
-        private void Start() {
+        private void Start()
+        {
             _prefs = Prefs.Singleton;
 
             NetworkObject playerObj = NetworkManager.Singleton.ConnectedClients[_clientId].PlayerObject;
+            mainCamera = Camera.main;
             playerCamera = playerObj.GetComponentInChildren<Camera>() ?? Camera.main;
             screenArea = playerCamera.pixelHeight * playerCamera.pixelWidth;
             Debug.Log($"Screen: pixelHeight = {playerCamera.pixelHeight}, pixelWidth = {playerCamera.pixelWidth}, area = {screenArea}");
 
+            if (priorityType.Equals(Prefs.PriorityType.ScreenPresence))
+            {
+                localCullingGroup = new CullingGroup();
+
+                netObjectsInScene = FindObjectsOfType<NetObject>()
+                    .Where((NetObject m) => m.gameObject != this.gameObject && m.gameObject.TryGetComponent(out MeshRenderer mr))
+                    .ToArray();
+
+                BoundingSphere[] cullingPoints = new BoundingSphere[netObjectsInScene.Length];
+                Transform[] meshTransforms = new Transform[netObjectsInScene.Length];
+
+                Vector3 extents;
+                for (var i = 0; i < netObjectsInScene.Length; i++)
+                {
+                    meshTransforms[i] = netObjectsInScene[i].GetComponent<Transform>();
+                    cullingPoints[i].position = meshTransforms[i].position;
+                    extents = netObjectsInScene[i].gameObject.GetComponent<MeshRenderer>().bounds.extents;
+                    netObjectsInScene[i].sphereSize = Mathf.Max(extents.x, extents.y, extents.z);
+                    cullingPoints[i].radius = netObjectsInScene[i].sphereSize;
+                }
+
+                localCullingGroup.onStateChanged = CullingEvent;
+                localCullingGroup.SetBoundingSpheres(cullingPoints);
+                localCullingGroup.targetCamera = playerCamera;
+            }
+
             StartCoroutine(ObjectsDetectionCycle());
+        }
+
+        void CullingEvent(CullingGroupEvent sphere)
+        {
+
+            if (sphere.hasBecomeVisible)
+            {
+                Debug.Log("Culling event: boject is visible");
+                frustumCollidingObjects.Add(netObjectsInScene[sphere.index]);
+            }
+            
+            if(sphere.hasBecomeInvisible)
+            {
+                Debug.Log("Culling event: boject is not visible anymore");
+                frustumCollidingObjects.Remove(netObjectsInScene[sphere.index]);
+            }
+        }
+
+        private void OnDisable()
+        {
+            if (priorityType.Equals(Prefs.PriorityType.ScreenPresence))
+            {
+                localCullingGroup.Dispose();
+                playerCamera.enabled = false;
+                mainCamera.enabled = !playerCamera.enabled;
+            }
         }
 
 
@@ -83,7 +142,15 @@ namespace Network.Player {
         /// </summary>
         private IEnumerator ObjectsDetectionCycle() {
             yield return new WaitForSeconds(.5F);
+
+            if (priorityType.Equals(Prefs.PriorityType.ScreenPresence))
+            {
+                playerCamera.enabled = true;
+                mainCamera.enabled = !playerCamera.enabled;
+            }
+                
             while (true) {
+                
                 DetectObjects();
                 yield return new WaitForSeconds(Prefs.Singleton.zoneDetectionDelay);
             }
@@ -143,7 +210,7 @@ namespace Network.Player {
         private void OnTriggerEnter(Collider other)
         {
             //TODO remove
-            //return;
+            return;
 
             //Debug.Log("Collision!");
             if (priorityType.Equals(Prefs.PriorityType.ScreenPresence))
@@ -174,7 +241,7 @@ namespace Network.Player {
         private void OnTriggerExit(Collider other)
         {
             //TODO remove
-            //return;
+            return;
 
             if (priorityType.Equals(Prefs.PriorityType.ScreenPresence))
             {
@@ -303,12 +370,15 @@ namespace Network.Player {
                     //find screen presence percentage
                     float screenPresencePercentage = ((topRightP.x - bottomLeftP.x) * (topRightP.y - bottomLeftP.y)) / screenArea;
 
+                    /*
+                    //debug messages to verify correct object detection of visible objects
                     if (screenPresencePercentage >= 1 || screenPresencePercentage <= 0)
                         Debug.LogError($"Screen presence percentage of the object {networkObj.name} is weird = " +
                             $"{screenPresencePercentage}! " );
 
                     if (bottomLeftP.z < 0 && topRightP.z < 0)
                         Debug.LogError($"This object {networkObj.name} is behind the player!");
+                    */
 
                     //Gets the distance of the object from the center of screen
                     float distanceFromScreenCenterPercentage = DistanceFromScreenCenterPercentage(

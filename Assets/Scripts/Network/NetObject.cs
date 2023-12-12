@@ -34,6 +34,8 @@ namespace Network.Objects {
         /// </summary>
         public bool isSentToClient = false;
 
+        public float sphereSize;
+
         private void Start() {
             if (NetworkManager.Singleton.IsServer) {
                 if (id == default) id = this.GetID();
@@ -130,6 +132,12 @@ namespace Network.Objects {
             {
                 Bounds b = r.bounds;
                 Gizmos.DrawWireCube(b.center, b.size);
+            }
+
+            if(sphereSize >= 0)
+            {
+                Gizmos.color = Color.red;
+                Gizmos.DrawWireSphere(transform.position, sphereSize);
             }
         }
     }
