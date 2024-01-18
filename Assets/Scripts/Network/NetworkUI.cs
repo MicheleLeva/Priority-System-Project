@@ -4,13 +4,22 @@ using System.Text.RegularExpressions;
 using Unity.Netcode;
 using Unity.Netcode.Transports.UTP;
 using UnityEngine;
+using TMPro;
+using Network.Http;
 
 namespace Network {
     /// <summary>
     /// Network initial GUI interface.
     /// </summary>
     public class NetworkUI : MonoBehaviour {
+
+        public TMP_InputField IpAddressInputField;
+
+        public ComponentClientHttp componentClientHttp;
+
         private void Start() {
+            IpAddressInputField.text = NetworkManager.Singleton.GetComponent<UnityTransport>().ConnectionData.Address;
+
             NetworkManager.Singleton.OnClientDisconnectCallback += clientId => {
                 Debug.LogError($"CLIENT {clientId} DISCONNECTED!");
             };
@@ -43,6 +52,12 @@ namespace Network {
         /// <returns>ip</returns>
         public static string GetIP(string hostname) {
             return Dns.GetHostAddresses(hostname)[0].ToString();
+        }
+
+        public void SetIP(string ip)
+        {
+            NetworkManager.Singleton.GetComponent<UnityTransport>().ConnectionData.Address = ip;
+            componentClientHttp.address = ip;
         }
 
     }
