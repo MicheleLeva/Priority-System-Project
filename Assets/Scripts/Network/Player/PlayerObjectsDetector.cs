@@ -32,12 +32,16 @@ namespace Network.Player {
         private Prefs _prefs;
 
         /// <summary>
-        /// Hashsets used by ScreenPresence priority system
+        /// Variables used by ScreenPresence priority system
         /// </summary>
         //set of objects currently colliding with the frustumCollider
-        private HashSet<NetObject> frustumCollidingObjects = new HashSet<NetObject>();
+        private HashSet<int> frustumCollidingObjectsIds = new HashSet<int>();
+        //set of object to be sent
+        private HashSet<int> toBeSent = new HashSet<int>();
         //set of objects already sent to the client
-        private HashSet<NetObject> sentObjects = new HashSet<NetObject>();
+        private HashSet<int> sentObjects = new HashSet<int>();
+
+        private int sendToQueueMax = 10;
         
         Prefs.PriorityType priorityType;
 
@@ -121,15 +125,24 @@ namespace Network.Player {
             }
             else if (priorityType.Equals(Prefs.PriorityType.ScreenPresence))
             {
-                var selected = frustumCollidingObjects.Except(_previous).ToList();
-                if (selected.Count > 0)
+                
+                var selected = frustumCollidingObjectsIds.Except(sentObjects);
+                if (selected.Count() > 0)
                 {
-                    SendNewObjects(selected);
-                    var removed = _previous.Except(frustumCollidingObjects).ToList();
-                    DeleteOldObjects(removed);
+                    if (selected.Count() > sendToQueueMax)
+                        selected = selected.Take(sendToQueueMax);
+
+                    var netObjects = selected.
+                    Where(k => ServerObjectsLoader.netObjects.ContainsKey(k)).Select(k => ServerObjectsLoader.netObjects[k]).ToList();
+                    SendNewObjects(netObjects);
+                    sentObjects.AddRange(selected);
+                    Debug.Log($"Number of FrustumCollidingObjectsIds = {frustumCollidingObjectsIds.Count()}, Selected {selected.Count()} objects, sent {netObjects.Count()} objects");
+
+                    //var removed = _previous.Except(frustumCollidingObjects).ToList();
+                    //DeleteOldObjects(removed);
 
                     // Update `previous` list
-                    _previous = frustumCollidingObjects.ToList();
+                    //_previous = frustumCollidingObjects.ToList();
                 }
 
             }
@@ -142,16 +155,13 @@ namespace Network.Player {
         /// <param name="collision">Object collided</param>
         private void OnTriggerEnter(Collider other)
         {
-            //TODO remove
-            //return;
-
             //Debug.Log("Collision!");
             if (priorityType.Equals(Prefs.PriorityType.ScreenPresence))
             {
                 
                 if (other.gameObject.TryGetComponent<NetObject>(out var o))
                 {
-                    frustumCollidingObjects.Add(o);
+                    frustumCollidingObjectsIds.Add(o.id);
                     /*
                     if (IsObjectCompletelyOccluded(other.gameObject))
                     {
@@ -173,13 +183,10 @@ namespace Network.Player {
         /// <param name="other">Object which stopped colliding</param>
         private void OnTriggerExit(Collider other)
         {
-            //TODO remove
-            //return;
-
             if (priorityType.Equals(Prefs.PriorityType.ScreenPresence))
             {
                 if (other.gameObject.TryGetComponent<NetObject>(out var o))
-                    frustumCollidingObjects.Remove(o);
+                    frustumCollidingObjectsIds.Remove(o.id);
             }
         }
 
