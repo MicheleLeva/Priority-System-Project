@@ -6,6 +6,7 @@ using Unity.Netcode.Transports.UTP;
 using UnityEngine;
 using TMPro;
 using Network.Http;
+using System.Linq;
 
 namespace Network {
     /// <summary>
@@ -17,12 +18,17 @@ namespace Network {
 
         public ComponentClientHttp componentClientHttp;
 
+        public Canvas ClientCanvas;
+        public ConsoleToGUI consoleToGUI;
+
         private void Start() {
             IpAddressInputField.text = NetworkManager.Singleton.GetComponent<UnityTransport>().ConnectionData.Address;
 
             NetworkManager.Singleton.OnClientDisconnectCallback += clientId => {
                 Debug.LogError($"CLIENT {clientId} DISCONNECTED!");
             };
+
+            consoleToGUI.clientCanvas = ClientCanvas;
         }
 
         public void StartServer() {
@@ -33,6 +39,11 @@ namespace Network {
             ConvertUnityTransportAddress(NetworkManager.Singleton.NetworkConfig.NetworkTransport as UnityTransport);
             gameObject.SetActive(false);
             GameObject.Find("Canvas Server").SetActive(false);
+
+            //turn on canvas for Oculus console debugging
+            //ClientCanvas.gameObject.SetActive(true);
+            //consoleToGUI.switchGUI();
+
             NetworkManager.Singleton.StartClient();
         }
 
@@ -58,6 +69,17 @@ namespace Network {
         {
             NetworkManager.Singleton.GetComponent<UnityTransport>().ConnectionData.Address = ip;
             componentClientHttp.address = ip;
+            Debug.Log("Ip string set: " + ip);
+        }
+
+        public void IpInputFieldAddChar(string value)
+        {
+            IpAddressInputField.text += value;
+        }
+
+        public void IpInputFieldBackSpace()
+        {
+            IpAddressInputField.text = IpAddressInputField.text.Substring(0, IpAddressInputField.text.Length - 1);
         }
 
     }

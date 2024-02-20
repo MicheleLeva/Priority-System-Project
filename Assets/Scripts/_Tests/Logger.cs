@@ -8,6 +8,7 @@ using Network.SpawnUpdater;
 using Unity.Netcode;
 using Unity.Netcode.Transports.UTP;
 using UnityEngine;
+using UnityEngine.Android;
 using UnityEngine.XR.Interaction.Toolkit;
 using UnityEngine.XR.Interaction.Toolkit.UI;
 
@@ -53,12 +54,13 @@ public class Logger : MonoBehaviour {
             r.GetComponent<XRBaseController>().enabled = false;
             r.transform.position += new Vector3(0, -10, 0);
         }
+        
+        _dir = Application.persistentDataPath + "/LOGS";
+        Directory.CreateDirectory(_dir);
 
-
-        _dir = Application.persistentDataPath + "/LOGS/";
         if (serverFps) {
             _transport = (UnityTransport) NetworkManager.Singleton.NetworkConfig.NetworkTransport;
-            Directory.CreateDirectory(_dir);
+            //Directory.CreateDirectory(_dir);
             _logFpsFile = "log_fps.csv";
             CreateFile("log_fps.csv");
 
@@ -102,9 +104,17 @@ public class Logger : MonoBehaviour {
             if (NetworkManager.Singleton.IsServer) yield break;
             if (NetworkManager.Singleton.IsClient) {
                 // SaveCameraView(Camera.main, $"/SCREEN/screen_{GetTime()}.png");
-                ScreenCapture.CaptureScreenshot($"{_dir}/SCREEN/screen_{GetTime()}.png");
+                //if (Permission.HasUserAuthorizedPermission(Permission.ExternalStorageWrite)) Debug.Log("ciaone"); else Debug.Log("non ciaone");
+#if ENABLE_VR
+                ScreenCapture.CaptureScreenshot($"LOGS/SCREEN/screen_{GetTime()}.png");
+#else
+                ScreenCapture.CaptureScreenshot($"_dir/SCREEN/screen_{GetTime()}.png");
+#endif
+                Debug.Log($"{_dir}/SCREEN/screen_{GetTime()}.png");
                 yield return new WaitForSeconds(screenDelay);
                 i++;
+                //Debug.Log("Capturing screenshot");
+                
             }
             else {
                 yield return new WaitForEndOfFrame();
