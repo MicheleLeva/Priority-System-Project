@@ -86,7 +86,17 @@ public class Startup : MonoBehaviour {
     }
 
     public static string GetArg(string name) {
-        var args = System.Environment.GetCommandLineArgs();
+        string[] args; 
+#if ENABLE_VR
+        AndroidJavaClass UnityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
+        AndroidJavaObject currentActivity = UnityPlayer.GetStatic<AndroidJavaObject>("currentActivity");
+
+        AndroidJavaObject intent = currentActivity.Call<AndroidJavaObject>("getIntent");
+        args = intent.Call<string>("getDataString").Split(',');
+
+#else
+        args = System.Environment.GetCommandLineArgs();
+#endif
         for (var i = 0; i < args.Length; i++) {
             if (args[i] == name && args.Length > i + 1) {
                 return args[i + 1];
@@ -94,5 +104,6 @@ public class Startup : MonoBehaviour {
         }
 
         return null;
+
     }
 }

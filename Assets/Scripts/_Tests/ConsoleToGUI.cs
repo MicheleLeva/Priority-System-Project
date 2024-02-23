@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 
 public class ConsoleToGUI : MonoBehaviour {
@@ -10,6 +11,11 @@ public class ConsoleToGUI : MonoBehaviour {
     /// Is the GUI active?
     /// </summary>
     private bool openGUI = false;
+
+    private bool assignedToClient;
+
+    public TextMeshProUGUI consoleLog;
+    public Canvas clientCanvas;
 
     void OnEnable() {
         Application.logMessageReceived += Log;
@@ -30,12 +36,34 @@ public class ConsoleToGUI : MonoBehaviour {
         }
     }
 
+    private void Update()
+    {
+        if (!assignedToClient)
+        {
+            GameObject networkPlayer = GameObject.Find("Network Player");
+            if(networkPlayer != null)
+            {
+                clientCanvas.worldCamera = networkPlayer.GetComponentInChildren<Camera>();
+                networkPlayer.transform.SetParent(gameObject.transform, false);
+                transform.localPosition = new Vector3(0, 0, 10f);
+                assignedToClient = true;
+            }  
+        }
+
+        if (openGUI)
+        {
+            consoleLog.text = myLog;
+        }
+    }
+
     void OnGUI() {
         //if (!Application.isEditor) //Do not display in editor ( or you can use the UNITY_EDITOR macro to also disable the rest)
+        /*
         if(openGUI)
         {
             myLog = GUI.TextArea(new Rect(10, 10, Screen.width - 10, Screen.height - 10), myLog);
         }
+        */
     }
     //#endif
 }

@@ -310,12 +310,12 @@ namespace Network.Player {
                     //find screen presence percentage
                     float screenPresencePercentage = ((topRightP.x - bottomLeftP.x) * (topRightP.y - bottomLeftP.y)) / screenArea;
 
-                    if (screenPresencePercentage >= 1 || screenPresencePercentage <= 0)
+                    /*if (screenPresencePercentage >= 1 || screenPresencePercentage <= 0)
                         Debug.LogError($"Screen presence percentage of the object {networkObj.name} is weird = " +
                             $"{screenPresencePercentage}! " );
 
                     if (bottomLeftP.z < 0 && topRightP.z < 0)
-                        Debug.LogError($"This object {networkObj.name} is behind the player!");
+                        Debug.LogError($"This object {networkObj.name} is behind the player!");*/
 
                     //Gets the distance of the object from the center of screen
                     float distanceFromScreenCenterPercentage = DistanceFromScreenCenterPercentage(
