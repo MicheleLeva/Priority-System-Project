@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using Network.Objects;
+using Network.Player;
 using Network.SpawnUpdater;
 using Network.Sync;
 using PathCreation;
@@ -21,12 +22,19 @@ namespace _Tests {
 
         private IEnumerator StartMoving() {
             yield return new WaitForSeconds(waitTime);
+            /*
             try {
                 _objTransform = FindObjectOfType<SyncTransformClient>().transform;
                 _objTransform.GetComponent<SyncTransformClient>().SetOwnership(true);
                 _moving = true;
             }
             catch (Exception _) { }
+            */
+
+            _objTransform = FindObjectOfType<NetworkPlayerMap>().transform.Find("Head");
+            _objTransform.GetComponent<SyncTransformClient>().SetOwnership(true);
+            _moving = true;
+            
         }
 
         private void Update() {
@@ -44,6 +52,7 @@ namespace _Tests {
             if (_moving) {
                 _distanceTravelled += speed * Time.deltaTime;
                 _objTransform.position = pathCreator.path.GetPointAtDistance(_distanceTravelled);
+                Debug.Log("path creator point" + pathCreator.path.GetPointAtDistance(_distanceTravelled));
                 _objTransform.rotation = pathCreator.path.GetRotationAtDistance(_distanceTravelled);
                 _objTransform.localRotation =
                     Quaternion.Euler(_objTransform.localRotation.eulerAngles + new Vector3(0, 0, 90));

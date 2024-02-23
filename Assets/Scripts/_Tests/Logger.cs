@@ -9,6 +9,7 @@ using Unity.Netcode;
 using Unity.Netcode.Transports.UTP;
 using UnityEngine;
 using UnityEngine.Android;
+using UnityEngine.XR;
 using UnityEngine.XR.Interaction.Toolkit;
 using UnityEngine.XR.Interaction.Toolkit.UI;
 
@@ -87,6 +88,20 @@ public class Logger : MonoBehaviour {
         }
     }
 
+    public static bool isCurrentAppInstanceVR()
+    {
+        var xrDisplaySubsystems = new List<XRDisplaySubsystem>();
+        SubsystemManager.GetInstances<XRDisplaySubsystem>(xrDisplaySubsystems);
+        foreach (var xrDisplay in xrDisplaySubsystems)
+        {
+            if (xrDisplay.running)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private static int GetVisibleObjs() {
         return FindObjectsOfType<NetObject>()
             .Count(no =>
@@ -105,16 +120,17 @@ public class Logger : MonoBehaviour {
             if (NetworkManager.Singleton.IsClient) {
                 // SaveCameraView(Camera.main, $"/SCREEN/screen_{GetTime()}.png");
                 //if (Permission.HasUserAuthorizedPermission(Permission.ExternalStorageWrite)) Debug.Log("ciaone"); else Debug.Log("non ciaone");
-#if ENABLE_VR
-                ScreenCapture.CaptureScreenshot($"LOGS/SCREEN/screen_{GetTime()}.png");
-#else
-                ScreenCapture.CaptureScreenshot($"_dir/SCREEN/screen_{GetTime()}.png");
-#endif
-                Debug.Log($"{_dir}/SCREEN/screen_{GetTime()}.png");
+            if (isCurrentAppInstanceVR())
+                {
+                    Debug.Log("Enable VR");
+                    ScreenCapture.CaptureScreenshot($"LOGS/SCREEN/screen_{GetTime()}.png");
+                }            
+            else
+                ScreenCapture.CaptureScreenshot($"{_dir}/SCREEN/screen_{GetTime()}.png");
+
+                //Debug.Log($"{_dir}/SCREEN/screen_{GetTime()}.png");
                 yield return new WaitForSeconds(screenDelay);
-                i++;
-                //Debug.Log("Capturing screenshot");
-                
+                i++;                
             }
             else {
                 yield return new WaitForEndOfFrame();
