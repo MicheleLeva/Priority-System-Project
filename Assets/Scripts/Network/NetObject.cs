@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
-using System.Security.Cryptography.X509Certificates;
 using Unity.Netcode;
 using UnityEngine;
 using Utils;
+using Network.Server;
+using Network.Player;
+
 
 namespace Network.Objects {
     /// <summary>
@@ -22,6 +24,10 @@ namespace Network.Objects {
         /// </summary>
         public bool isMovable;
         /// <summary>
+        /// Corners of the Bounds of the renderer, used for Screen Presence priority calculations
+        /// </summary>
+        public Vector3[] rendererBoundsCorners;
+        /// <summary>
         /// which players are currently facing the object
         /// </summary>
         public HashSet<ulong> facing = new();
@@ -33,11 +39,38 @@ namespace Network.Objects {
         /// Has the object been sent to at least one client?
         /// </summary>
         public bool isSentToClient = false;
+        /// <summary>
+        /// Debug bool
+        /// </summary>
+        public bool error;
+
+        private Gradient priorityGradient = new Gradient();
 
         private void Start() {
             if (NetworkManager.Singleton.IsServer) {
-                if (id == default) id = this.GetID();
+                if (id == default)
+                {
+                    id = this.GetID();
+                    AddNetObjectToGlobalDict();
+                }
+
+                //get object Axis-Aligned Bounding Box corners of this object for Screen Presence Priority calculations
+                Bounds bounds = GetComponent<Renderer>().bounds;
+                rendererBoundsCorners = new Vector3[8];
+                rendererBoundsCorners[0] = bounds.min;
+                rendererBoundsCorners[1] = bounds.max;
+                rendererBoundsCorners[2] = new Vector3(rendererBoundsCorners[0].x, rendererBoundsCorners[0].y, rendererBoundsCorners[1].z);
+                rendererBoundsCorners[3] = new Vector3(rendererBoundsCorners[0].x, rendererBoundsCorners[1].y, rendererBoundsCorners[0].z);
+                rendererBoundsCorners[4] = new Vector3(rendererBoundsCorners[1].x, rendererBoundsCorners[0].y, rendererBoundsCorners[0].z);
+                rendererBoundsCorners[5] = new Vector3(rendererBoundsCorners[0].x, rendererBoundsCorners[1].y, rendererBoundsCorners[1].z);
+                rendererBoundsCorners[6] = new Vector3(rendererBoundsCorners[1].x, rendererBoundsCorners[0].y, rendererBoundsCorners[1].z);
+                rendererBoundsCorners[7] = new Vector3(rendererBoundsCorners[1].x, rendererBoundsCorners[1].y, rendererBoundsCorners[0].z);
             }
+        }
+
+        public void AddNetObjectToGlobalDict()
+        {
+            FindObjectOfType<ServerObjectsLoader>().AddNetObjectsToDict(gameObject);
         }
 
         /// <summary>
@@ -123,14 +156,44 @@ namespace Network.Objects {
             
         }
 
+        public Vector3 colliderSize;
+        public Vector3 rendererSize;
+
         private void OnDrawGizmos()
         {
-            //Debug gizmo to determine which objects have already been sent to a client
-            if(TryGetComponent(out Collider r) && isSentToClient)
+            Bounds rendererBounds;
+            int highestPriority = PlayerObjectsDetector.highestPriority;
+
+            // Blend color from yellow at 0% to red at 100%
+            var gradientColors = new GradientColorKey[2];
+            gradientColors[0] = new GradientColorKey(Color.yellow, 0.0f);
+            gradientColors[1] = new GradientColorKey(Color.red, 1.0f);
+
+            // Alpha stays opaque
+            var alphas = new GradientAlphaKey[2];
+            alphas[0] = new GradientAlphaKey(1.0f, 1.0f);
+            alphas[1] = new GradientAlphaKey(1.0f, 1.0f);
+
+            priorityGradient.SetKeys(gradientColors, alphas);
+
+            if (TryGetComponent(out Renderer r))
             {
-                Bounds b = r.bounds;
-                Gizmos.DrawWireCube(b.center, b.size);
+                rendererBounds = r.bounds;
+                if (isSentToClient)
+                    Gizmos.color = Color.green;
+                else
+                    Gizmos.color = priorityGradient.Evaluate(priority / highestPriority);
+                Gizmos.DrawWireCube(rendererBounds.center, rendererBounds.size);
+                /*
+                if (error)
+                {
+                    Gizmos.color = Color.red;
+                    Gizmos.DrawWireMesh(GetComponent<Mesh>());
+                }*/
+                rendererSize = rendererBounds.size;
             }
+
         }
+
     }
 }

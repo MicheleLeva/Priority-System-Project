@@ -47,13 +47,13 @@ namespace Utils {
         /// <summary>
         /// Calculate object's priority based on how much it covers on the client's screen and its distance.
         /// </summary>
-        /// <param name="screenPresence">Percentage of screen occupied by the object</param>
+        /// <param name="screenPresencePercentage">Percentage of screen occupied by the object</param>
         /// <param name="distance">Distance between the object and the player camera</param>
         /// <returns></returns>
-        public static int CalcWithScreenPresence(double screenPresence, double distance, double distanceFromScreenCenterPerc)
+        public static int CalcWithScreenPresence(double screenPresencePercentage, double distance, double distanceFromScreenCenterPerc)
         {
             //multiplication by 1000 is to distribute better the priorities with similar distance and screen presence
-            int priority = (int)(distance * 1000f * (1f - screenPresence) * distanceFromScreenCenterPerc);
+            int priority = (int)(distance * 1000f * (1f - screenPresencePercentage) * distanceFromScreenCenterPerc);
 
             /*Debug.Log($"Calculating priority: distance {distance}, screenPresence {screenPresence}, " +
                 $"distanceFromScreenCenterPerc {distanceFromScreenCenterPerc} --> priority {priority}");*/

@@ -21,7 +21,10 @@ public class Startup : MonoBehaviour {
 
         try {
             var time = int.Parse(GetArg("-time"));
-            StartCoroutine(KillAfter(time));
+            if (!Logger.Move)
+                StartCoroutine(KillAfter(time));
+            else
+                FindObjectOfType<Follower>().OnPathCompleted += KillApp;
         }
         catch {
             Debug.Log("[Settings] no timer");
@@ -85,18 +88,26 @@ public class Startup : MonoBehaviour {
         Application.Quit();
     }
 
+    public void KillApp()
+    {
+        Logger.SaveFiles();
+        Application.Quit();
+    }
+
     public static string GetArg(string name) {
-        string[] args; 
-#if ENABLE_VR
-        AndroidJavaClass UnityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
-        AndroidJavaObject currentActivity = UnityPlayer.GetStatic<AndroidJavaObject>("currentActivity");
+        string[] args;
 
-        AndroidJavaObject intent = currentActivity.Call<AndroidJavaObject>("getIntent");
-        args = intent.Call<string>("getDataString").Split(',');
+        if (Logger.IsCurrentAppInstanceVR())
+        {
+            AndroidJavaClass UnityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
+            AndroidJavaObject currentActivity = UnityPlayer.GetStatic<AndroidJavaObject>("currentActivity");
 
-#else
-        args = System.Environment.GetCommandLineArgs();
-#endif
+            AndroidJavaObject intent = currentActivity.Call<AndroidJavaObject>("getIntent");
+            args = intent.Call<string>("getDataString").Split(',');
+        }
+        else
+            args = System.Environment.GetCommandLineArgs();
+
         for (var i = 0; i < args.Length; i++) {
             if (args[i] == name && args.Length > i + 1) {
                 return args[i + 1];

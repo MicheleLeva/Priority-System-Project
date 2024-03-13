@@ -84,11 +84,15 @@ public class Logger : MonoBehaviour {
                 file.Delete();
             }
 
-            StartCoroutine(ScreenLoopClient());
+            //If the character is moving screenshots will be taken through events callbacks, see Follower script
+            if (!move)
+                StartCoroutine(ScreenLoopClient());
+            else
+                FindObjectOfType<Follower>().OnStepMade += TakeScreenshot;
         }
     }
 
-    public static bool isCurrentAppInstanceVR()
+    public static bool IsCurrentAppInstanceVR()
     {
         var xrDisplaySubsystems = new List<XRDisplaySubsystem>();
         SubsystemManager.GetInstances<XRDisplaySubsystem>(xrDisplaySubsystems);
@@ -119,14 +123,14 @@ public class Logger : MonoBehaviour {
             if (NetworkManager.Singleton.IsServer) yield break;
             if (NetworkManager.Singleton.IsClient) {
                 // SaveCameraView(Camera.main, $"/SCREEN/screen_{GetTime()}.png");
-                //if (Permission.HasUserAuthorizedPermission(Permission.ExternalStorageWrite)) Debug.Log("ciaone"); else Debug.Log("non ciaone");
-            if (isCurrentAppInstanceVR())
-                {
-                    Debug.Log("Enable VR");
-                    ScreenCapture.CaptureScreenshot($"LOGS/SCREEN/screen_{GetTime()}.png");
-                }            
-            else
-                ScreenCapture.CaptureScreenshot($"{_dir}/SCREEN/screen_{GetTime()}.png");
+
+                if (IsCurrentAppInstanceVR())
+                    {
+                        Debug.Log("Enable VR");
+                        ScreenCapture.CaptureScreenshot($"LOGS/SCREEN/screen_{GetTime()}.png");
+                    }            
+                else
+                    ScreenCapture.CaptureScreenshot($"{_dir}/SCREEN/screen_{GetTime()}.png");
 
                 //Debug.Log($"{_dir}/SCREEN/screen_{GetTime()}.png");
                 yield return new WaitForSeconds(screenDelay);
@@ -135,6 +139,25 @@ public class Logger : MonoBehaviour {
             else {
                 yield return new WaitForEndOfFrame();
             }
+        }
+    }
+
+    public void TakeScreenshot()
+    {
+        if (NetworkManager.Singleton.IsServer) return;
+        if (NetworkManager.Singleton.IsClient)
+        {
+            // SaveCameraView(Camera.main, $"/SCREEN/screen_{GetTime()}.png");
+
+            if (IsCurrentAppInstanceVR())
+            {
+                //Debug.Log("Enable VR");
+                ScreenCapture.CaptureScreenshot($"LOGS/SCREEN/screen_{GetTime()}.png");
+            }
+            else
+                ScreenCapture.CaptureScreenshot($"{_dir}/SCREEN/screen_{GetTime()}.png");
+
+            //Debug.Log($"{_dir}/SCREEN/screen_{GetTime()}.png");
         }
     }
 
@@ -229,10 +252,9 @@ public class Logger : MonoBehaviour {
         File.WriteAllBytes(_dir + filename, byteArray);
     }
 
-
-// ------------------------------------------------------------------
-// FILES
-// ------------------------------------------------------------------
+    // ------------------------------------------------------------------
+    // FILES
+    // ------------------------------------------------------------------
 
     private static void CreateFile(string path) {
         File.WriteAllText(_dir + path, "");

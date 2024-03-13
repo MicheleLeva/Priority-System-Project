@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using Network.Objects;
 using Network.SpawnUpdater;
 using Unity.Netcode;
 using UnityEngine;
@@ -34,7 +35,9 @@ namespace Network.Server {
             while (true) {
                 foreach (var client in _objectQueue.Clients) {
                     if (_objectQueue.Size(client) > 0) {
-                        sm.SendObject(client, _objectQueue.Get(client));
+                        GameObject obj = _objectQueue.Get(client);
+                        obj.GetComponent<NetObject>().isSentToClient = true;
+                        sm.SendObject(client, obj);
                     }
                 }
 

@@ -18,16 +18,17 @@ namespace Network.Server {
         private void Start() {
             NetworkManager.OnServerStarted += () => {
                 var resources = Resources.LoadAll<GameObject>("Env");
+                Debug.Log($"number of objects in resources = {resources.Length}");
                 foreach (var res in resources) {
-                    GameObject gameObject =  Instantiate(res, world.GetComponent<Transform>());
-                    StartCoroutine(AddNetObjectsDict(gameObject));
+                    GameObject gObject =  Instantiate(res, world.GetComponent<Transform>());
+                    NetObject netObject = gObject.GetComponent<NetObject>();
                 }
+                Debug.Log($"number of objects in netObjects Dict = {netObjects.Count}");
             };
         }
 
-        private IEnumerator AddNetObjectsDict(GameObject gameObject)
+        public void AddNetObjectsToDict(GameObject gameObject)
         {
-            yield return null;
             NetObject netObject = gameObject.GetComponent<NetObject>();
             netObjects.Add(netObject.id, netObject);
         }

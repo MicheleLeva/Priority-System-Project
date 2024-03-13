@@ -50,6 +50,14 @@ namespace Network.Server {
             return _queues[client]?.Dequeue();
         }
 
+        public void UpdatePriority(ulong client, GameObject go, int newPriority) 
+        {
+            if (_queues[client].Contains(go))
+            {
+                _queues[client].UpdatePriority(go, newPriority);
+            }
+        }
+
         /// <summary>
         /// Lenght of the Client's queue.
         /// </summary>

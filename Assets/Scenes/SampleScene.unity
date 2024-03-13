@@ -152,7 +152,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bd49d0b1ec8145a1869c72054b2bdacb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pathCreator: {fileID: 1314681071}
+  pathCreator: {fileID: 4503387261177161944}
   speed: 2
   waitTime: 5
   move: 0
@@ -4224,8 +4224,12 @@ MonoBehaviour:
   id: 0
   priority: 0
   isMovable: 0
+  rendererBoundsCorners: []
   owner: 0
   isSentToClient: 0
+  error: 0
+  colliderSize: {x: 0, y: 0, z: 0}
+  rendererSize: {x: 0, y: 0, z: 0}
 --- !u!4 &824728277
 Transform:
   m_ObjectHideFlags: 0
@@ -6687,7 +6691,7 @@ MonoBehaviour:
       - 0
       globalNormalsAngle: 0
       flipNormals: 0
-    vertexPathUpToDate: 0
+    vertexPathUpToDate: 1
     vertexPathMaxAngleError: 0.3
     vertexPathMinVertexSpacing: 0.01
     showTransformTool: 1
@@ -8781,7 +8785,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   pathCreator: {fileID: 1314681071}
-  speed: 0.1
+  speed: 2
+  waitForCompleteSceneLoading: 0
 --- !u!1 &1577749883
 GameObject:
   m_ObjectHideFlags: 0
@@ -11928,7 +11933,7 @@ MonoBehaviour:
       - 0
       globalNormalsAngle: 0
       flipNormals: 0
-    vertexPathUpToDate: 0
+    vertexPathUpToDate: 1
     vertexPathMaxAngleError: 0.3
     vertexPathMinVertexSpacing: 0.01
     showTransformTool: 1
@@ -11965,7 +11970,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &4503387261177161947
 Transform:
   m_ObjectHideFlags: 0

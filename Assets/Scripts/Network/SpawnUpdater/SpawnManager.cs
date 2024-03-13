@@ -169,7 +169,7 @@ namespace Network.SpawnUpdater {
         /// <returns></returns>
         private IEnumerator WaitForParent(Transform objTransform, int parent, int delay) {
             var scale = objTransform.localScale; // Memorize scale
-            objTransform.localScale = Vector3.zero; //objects gest "hidden" by setting its scale to zero while waiting for its parent
+            objTransform.localScale = Vector3.zero; //objects gets "hidden" by setting its scale to zero while waiting for its parent
 
             var found = false;
             while (!found) {
