@@ -45,17 +45,22 @@ namespace Utils {
         }
 
         /// <summary>
-        /// Calculate object's priority based on how much it covers on the client's screen and its distance.
+        /// Calculate object's priority based on how much it covers on the client's screen and its distances.
         /// </summary>
-        /// <param name="screenPresencePercentage">Percentage of screen occupied by the object</param>
-        /// <param name="distance">Distance between the object and the player camera</param>
+        /// <param name="screenPresencePercentage">Percentage of screen occupied by the object. Higher the value, more of the screen is occupied.
+        /// Higher value --> higher priority -> We subtract it from 1</param>
+        /// /// <param name="distancePercentage">Distance from player to object expressed in percentage of distance from furthest object. 
+        /// Lower value --> higher priority -> No manipulation</param>
+        /// <param name="distanceFromScreenCenterPerc">Distance of the object from center of screen expressed in percentage of distance from center of screen to a corner.
+        /// Lower value --> higher priority --> No manipulation required</param>
         /// <returns></returns>
-        public static int CalcWithScreenPresence(double screenPresencePercentage, double distance, double distanceFromScreenCenterPerc)
+        public static int CalcWithScreenPresence(double screenPresencePercentage, double distancePercentage, double distanceFromScreenCenterPerc)
         {
-            //multiplication by 1000 is to distribute better the priorities with similar distance and screen presence
-            int priority = (int)(distance * 1000f * (1f - screenPresencePercentage) * distanceFromScreenCenterPerc);
 
-            /*Debug.Log($"Calculating priority: distance {distance}, screenPresence {screenPresence}, " +
+            //multiplication by 100 is to distribute better the priorities with weights due to integer casting
+            int priority = (int)(100f * distancePercentage * 100f * (1f - screenPresencePercentage) * 100f * distanceFromScreenCenterPerc);
+
+            /*Debug.Log($"Calculating priority: distancePercentage {distancePercentage}, screenPresencePercentage {screenPresencePercentage}, " +
                 $"distanceFromScreenCenterPerc {distanceFromScreenCenterPerc} --> priority {priority}");*/
 
             return priority;

@@ -55,7 +55,8 @@ namespace Network.Objects {
                 }
 
                 //get object Axis-Aligned Bounding Box corners of this object for Screen Presence Priority calculations
-                Bounds bounds = GetComponent<Renderer>().bounds;
+                Bounds bounds = GetComponent<Renderer>().bounds.size.magnitude >= GetComponent<Collider>().bounds.size.magnitude ? 
+                    GetComponent<Renderer>().bounds : GetComponent<Collider>().bounds;
                 rendererBoundsCorners = new Vector3[8];
                 rendererBoundsCorners[0] = bounds.min;
                 rendererBoundsCorners[1] = bounds.max;
@@ -182,7 +183,7 @@ namespace Network.Objects {
                 if (isSentToClient)
                     Gizmos.color = Color.green;
                 else
-                    Gizmos.color = priorityGradient.Evaluate(priority / highestPriority);
+                    Gizmos.color = priorityGradient.Evaluate(priority / (float)highestPriority);
                 Gizmos.DrawWireCube(rendererBounds.center, rendererBounds.size);
                 /*
                 if (error)
