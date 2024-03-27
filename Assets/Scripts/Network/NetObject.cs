@@ -56,7 +56,7 @@ namespace Network.Objects {
 
                 //get object Axis-Aligned Bounding Box corners of this object for Screen Presence Priority calculations
                 Bounds bounds = GetComponent<Renderer>().bounds.size.magnitude >= GetComponent<Collider>().bounds.size.magnitude ? 
-                    GetComponent<Renderer>().bounds : GetComponent<Collider>().bounds;
+                    GetComponent<Collider>().bounds : GetComponent<Renderer>().bounds;
                 rendererBoundsCorners = new Vector3[8];
                 rendererBoundsCorners[0] = bounds.min;
                 rendererBoundsCorners[1] = bounds.max;
@@ -163,7 +163,7 @@ namespace Network.Objects {
         private void OnDrawGizmos()
         {
             Bounds rendererBounds;
-            int highestPriority = PlayerObjectsDetector.highestPriority;
+            int highestPriority = Priority.highestPriority;
 
             // Blend color from yellow at 0% to red at 100%
             var gradientColors = new GradientColorKey[2];

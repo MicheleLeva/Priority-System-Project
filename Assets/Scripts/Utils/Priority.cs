@@ -9,15 +9,16 @@ namespace Utils {
         // -------------------------------------------------+
         // ---------- PRIORITY CALC PROPERTIES -------------+
         // -------------------------------------------------+
-        // Gaussian
-        private const float Mu = 4; // mean
-        private const float Sigma = 40; // standard deviation
+        // Multiplication Weights (their sum must be 1)
+        public static double distancePercentageWeight = 0.35d;
+        public static double screenPresencePercentageWeight = 0.45d;
+        public static double distanceFromScreenCenterPercWeight = 0.2d;
 
-        // Multiplication Factors
-        private const int FacingFactor = -1000;
-        private const int GaussFactor = 1;
+        //in priority calculation this is the highest priority
+        //the greater it is than the number of NetObjects in the scene, the lesser is the chance to have collisions
+        // (two or more NetObjects with the same priority --> race condition)
+        public static int highestPriority = 1000000;
 
-        private const int LevelFactor = 1;
         // -------------------------------------------------+
 
         /// <summary>
@@ -58,7 +59,10 @@ namespace Utils {
         {
 
             //multiplication by 100 is to distribute better the priorities with weights due to integer casting
-            int priority = (int)(100f * distancePercentage * 100f * (1f - screenPresencePercentage) * 100f * distanceFromScreenCenterPerc);
+            //int priority = (int)(100f * distancePercentage * 100f * (1f - screenPresencePercentage) * 100f * distanceFromScreenCenterPerc);
+            
+            int priority = Mathf.RoundToInt((float) (highestPriority * (distanceFromScreenCenterPercWeight * distancePercentage + 
+                screenPresencePercentageWeight * (1f - screenPresencePercentage) + distanceFromScreenCenterPercWeight * distanceFromScreenCenterPerc)));
 
             /*Debug.Log($"Calculating priority: distancePercentage {distancePercentage}, screenPresencePercentage {screenPresencePercentage}, " +
                 $"distanceFromScreenCenterPerc {distanceFromScreenCenterPerc} --> priority {priority}");*/
@@ -66,10 +70,16 @@ namespace Utils {
             return priority;
         }
 
-        static double Gauss(double x, double mu, double sigma) {
-            return Math.Exp(-((x - mu) * (x - mu)) / (2 * sigma * sigma)) / Math.Sqrt(2 * Math.PI * sigma * sigma);
+        public static int CalcWithDistance(double distancePercentage) 
+        {
+            return Mathf.RoundToInt((float)(highestPriority * distanceFromScreenCenterPercWeight * distancePercentage));
         }
-    }
 
-    // old: (int) ((level + 1) * distance) / ((facing ? 1 : 2) * 10);
+        public static void SetWeights(double w1, double w2, double w3)
+        {
+            distancePercentageWeight = w1;
+            screenPresencePercentageWeight = w2;
+            distanceFromScreenCenterPercWeight = w3;
+    }
+    }
 }

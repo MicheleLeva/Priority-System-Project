@@ -3,6 +3,7 @@ using Network;
 using Unity.Netcode;
 using Unity.Netcode.Transports.UTP;
 using UnityEngine;
+using Utils;
 using Application = UnityEngine.Application;
 
 public class Startup : MonoBehaviour {
@@ -72,6 +73,30 @@ public class Startup : MonoBehaviour {
         {
             Debug.Log("[Settings] Priority type not set from args");
         }
+
+        try
+        {
+            string getLocalIp = GetArg("-SetLocalIP");
+            FindObjectOfType<NetworkUI>().SetIP(NetworkUI.GetLocalIPAddress());
+        }
+        catch 
+        {
+            Debug.Log("[Settings] Using default ip");
+        }
+
+        try
+        {
+            double d1 = double.Parse(GetArg("-D1"));
+            double d2 = double.Parse(GetArg("-D2"));
+            double d3 = double.Parse(GetArg("-D3"));
+
+            Priority.SetWeights(d1, d2, d3);
+        }
+        catch
+        {
+            Debug.Log("[Settings] Using default weights for priority calculations");
+        }
+
     }
 
     public static IEnumerator StartNetwork(string mode) {

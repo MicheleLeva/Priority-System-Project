@@ -7,6 +7,8 @@ using UnityEngine;
 using TMPro;
 using Network.Http;
 using System.Linq;
+using System.Net.Sockets;
+using UnityEngine.SocialPlatforms;
 
 namespace Network {
     /// <summary>
@@ -70,6 +72,16 @@ namespace Network {
             NetworkManager.Singleton.GetComponent<UnityTransport>().ConnectionData.Address = ip;
             componentClientHttp.address = ip;
             Debug.Log("Ip string set: " + ip);
+        }
+
+        public static string GetLocalIPAddress()
+        {
+            using (Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, 0))
+            {
+                socket.Connect("8.8.8.8", 65530);
+                IPEndPoint endPoint = socket.LocalEndPoint as IPEndPoint;
+                return endPoint.Address.ToString();
+            }
         }
 
         public void IpInputFieldAddChar(string value)

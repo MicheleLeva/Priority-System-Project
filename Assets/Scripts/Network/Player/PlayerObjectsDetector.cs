@@ -40,7 +40,6 @@ namespace Network.Player {
         private HashSet<int> sentObjects = new HashSet<int>();
 
         private int sendToQueueMax = 10;
-        public static int highestPriority = 1000000;
         public static double longestDistance;
 
         Prefs.PriorityType priorityType;
@@ -109,8 +108,8 @@ namespace Network.Player {
                 longestDistance = distance > longestDistance ? distance : longestDistance;
 
                 //initialize all objects to the highest priority
-                _objectQueue.Add(_clientId, netObject.gameObject, highestPriority);
-                netObject.priority = highestPriority;
+                _objectQueue.Add(_clientId, netObject.gameObject, Priority.highestPriority);
+                netObject.priority = Priority.highestPriority;
             }
 
             yield return null;
@@ -266,8 +265,16 @@ namespace Network.Player {
                 if (other.gameObject.TryGetComponent<NetObject>(out var o))
                 {
                     frustumCollidingObjectsIds.Remove(o.id);
-                    ServerObjectsLoader.netObjects[o.id].priority = highestPriority;
-                    _objectQueue.UpdatePriority(_clientId, ServerObjectsLoader.netObjects[o.id].gameObject, highestPriority);
+
+                    var playerPos = NetworkManager.Singleton.ConnectedClients[_clientId].PlayerObject.transform.GetChild(0)
+                    .position;
+                    var objPos = o.GetComponent<MeshRenderer>().bounds.ClosestPoint(playerPos);
+                    var distance = (objPos - playerPos).magnitude;
+                    double distancePercentage = distance / longestDistance;
+
+                    int priority = Priority.CalcWithDistance(distancePercentage);
+                    ServerObjectsLoader.netObjects[o.id].priority = priority;
+                    _objectQueue.UpdatePriority(_clientId, ServerObjectsLoader.netObjects[o.id].gameObject, priority);
                 }
                     
             }
