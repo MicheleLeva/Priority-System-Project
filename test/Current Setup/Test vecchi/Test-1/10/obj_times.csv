@@ -1,0 +1,59 @@
+6.060, 6.533, Tree (4)(Clone), 1, Serializers.SMaterial, 375
+6.060, 6.867, Tree (4)(Clone), 1, Serializers.SMaterial, 105087
+6.364, 6.867, Palm (3)(Clone), 1, Serializers.SMesh, 209132
+6.364, 6.867, Palm (3)(Clone), 1, Serializers.SMaterial, 62029
+6.364, 6.867, Palm (3)(Clone), 1, Serializers.SMaterial, 375
+6.364, 6.867, Table Variant Variant(Clone), 1, Serializers.SMesh, 7026
+6.364, 6.867, Table Variant Variant(Clone), 1, Serializers.SMaterial, 380
+6.364, 6.867, blasterH Variant Variant(Clone), 1, Serializers.SMesh, 115002
+6.364, 6.867, blasterH Variant Variant(Clone), 1, Serializers.SMaterial, 378
+6.364, 6.867, blasterH Variant Variant(Clone), 1, Serializers.SMaterial, 376
+6.364, 6.867, blasterH Variant Variant(Clone), 1, Serializers.SMaterial, 382
+6.364, 6.867, blasterH Variant Variant(Clone), 1, Serializers.SMaterial, 375
+6.364, 6.867, Bullet, 1, Serializers.SMesh, 25708
+6.364, 6.867, Bullet, 1, Serializers.SMaterial, 377
+6.364, 6.867, banana Variant Variant(Clone), 1, Serializers.SMesh, 71493
+6.364, 6.867, banana Variant Variant(Clone), 1, Serializers.SMaterial, 380
+6.364, 6.867, banana Variant Variant(Clone), 1, Serializers.SMaterial, 377
+6.428, 6.867, Torch Variant Variant 1(Clone), 2, Serializers.SMesh, 175598
+6.428, 6.867, Torch Variant Variant 1(Clone), 2, Serializers.SMaterial, 385
+6.060, 7.200, Tree (4)(Clone), 1, Serializers.SMesh, 1428409
+7.200, 7.200, leek Variant Variant(Clone), 1, Serializers.SMaterial, 377
+7.200, 7.200, leek Variant Variant(Clone), 1, Serializers.SMaterial, 382
+7.200, 7.200, leek Variant Variant(Clone), 1, Serializers.SMaterial, 381
+7.200, 7.533, saber Variant Variant(Clone), 1, Serializers.SMesh, 55204
+7.200, 7.533, leek Variant Variant(Clone), 1, Serializers.SMesh, 128383
+7.200, 7.533, saber Variant Variant(Clone), 1, Serializers.SMaterial, 31292
+7.200, 7.533, Blade, 1, Serializers.SMaterial, 477
+7.200, 7.533, Blade, 1, Serializers.SMesh, 8002
+7.200, 7.533, iceCream Variant Variant(Clone), 1, Serializers.SMaterial, 384
+7.200, 7.533, iceCream Variant Variant(Clone), 1, Serializers.SMaterial, 383
+7.200, 7.533, iceCream Variant Variant(Clone), 1, Serializers.SMesh, 47449
+7.533, 7.533, Building1_A_Ground 2(Clone), 0, Serializers.SMaterial, 20853
+7.533, 7.775, Building1_A_Roof 2(Clone), 0, Serializers.SMesh, 308161
+7.533, 7.775, Building1_A_Roof 2(Clone), 0, Serializers.SMaterial, 17592
+7.533, 8.064, Building1_A_Ground 2(Clone), 0, Serializers.SMesh, 647975
+7.533, 8.064, Building1_A_LevelA (1)(Clone), 0, Serializers.SMaterial, 18409
+7.533, 8.064, Road_Straight (1)(Clone), 0, Serializers.SMesh, 11948
+7.533, 8.064, Road_Straight (1)(Clone), 0, Serializers.SMaterial, 10827
+7.775, 8.064, StreetLight (7)(Clone), 2, Serializers.SMesh, 91036
+7.775, 8.064, StreetLight (7)(Clone), 2, Serializers.SMaterial, 378
+7.775, 8.064, StreetSign (3)(Clone), 2, Serializers.SMesh, 40949
+7.775, 8.064, StreetSign (3)(Clone), 2, Serializers.SMaterial, 14885
+7.775, 8.064, Road_Corner (3)(Clone), 0, Serializers.SMesh, 58176
+7.775, 8.064, Road_Corner (3)(Clone), 0, Serializers.SMaterial, 13586
+7.533, 8.064, Building1_A_LevelA (1)(Clone), 0, Serializers.SMesh, 661953
+7.775, 8.064, Car_1 (3)(Clone), 1, Serializers.SMaterial, 16711
+8.064, 8.064, Car_2(Clone), 1, Serializers.SMaterial, 18749
+8.064, 8.064, Wheel_2 (8), 2, Serializers.SMesh, 47206
+8.064, 8.064, Wheel_2 (8), 2, Serializers.SMaterial, 16462
+7.775, 8.397, Car_1 (3)(Clone), 1, Serializers.SMesh, 597965
+9.029, 9.039, Building1_A_Ground (10)(Clone), 0, Serializers.SMaterial, 20764
+9.080, 9.087, Building1_A_LevelA (1) 2 (10)(Clone), 0, Serializers.SMaterial, 18456
+9.533, 9.545, Building1_A_Roof 3 (10)(Clone), 0, Serializers.SMaterial, 17541
+10.903, 10.992, Car_2 (4)(Clone), 1, Serializers.SMaterial, 17197
+12.878, 12.889, Car_2 (6)(Clone), 1, Serializers.SMaterial, 16500
+15.012, 15.020, Car_1 (22)(Clone), 1, Serializers.SMaterial, 10865
+19.395, 19.411, Building1_A_Ground 2 (4)(Clone), 0, Serializers.SMaterial, 22292
+19.462, 19.472, Building1_A_LevelA (21)(Clone), 0, Serializers.SMaterial, 19901
+19.662, 19.667, Building1_A_Roof 2 (7)(Clone), 0, Serializers.SMaterial, 18877

@@ -1,3 +1,5 @@
 Builds/
 Priority-System-Project_clone_0/
 test/**/*.png
+test/**/*.csv
+test/**/*.xlsx

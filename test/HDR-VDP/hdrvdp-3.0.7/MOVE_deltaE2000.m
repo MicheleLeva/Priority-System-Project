@@ -1,0 +1,53 @@
+function X = MOVE_deltaE2000 ()
+
+root = "test_move";
+dirs = [root+"/Test-4-SP", root+"/Test-4-AOI"];
+fullDir = root+"/FullMoving";
+
+imgs = dir(fullDir + "/screen*.png");
+imgs = {imgs(:).name};
+[imgs, ~] = sort_nat(imgs);
+perspNum = length(imgs);
+fulls = cell(perspNum, 1);
+for i = 1:perspNum
+    full = double(imread(fullDir + "/" + imgs(i)));
+    fulls{i} = full;
+end
+
+for i = 1:length(dirs)
+    d1 = dirs(i);
+    f = figure('visible','off');
+    mbps = ["/4", "/10", "/20", "/40"];
+    %mbps = "/full";
+    for k = 1:length(mbps)
+        X = zeros(perspNum, 1);
+        d = d1 + mbps(k) + "/SCREEN";
+        if exist(d + "/dE2000", 'dir')
+            rmdir(d + "/dE2000", 's');
+        end
+        mkdir(d + "/dE2000");
+        imgs = dir(d + "/screen*.png");
+        imgs = {imgs(:).name};
+        [imgs, ~] = sort_nat(imgs);
+        for j = 1:length(imgs)
+            file = d + "/" + imgs(j);
+            disp(file);
+            img = imread(file);
+            diff = imcolordiff(img, fulls{j}, "Standard", "CIEDE2000",'kL',2,'K1',0.048,'K2',0.014);
+            imagesc(diff);
+            clim([0,100]);
+            colorbar;
+            saveas(f, d + "/dE2000/" + imgs(j));
+            X(j, 1) = mean((mean(diff)));
+        end
+        plot(X)
+        delete(d1 + mbps(k) + "/deltaE2000.png");
+        saveas(f,  d1 + mbps(k) + "/deltaE2000.png");
+        writematrix(X, d1 + mbps(k) + "/deltaE2000.xlsx");
+    end
+end
+
+
+
+
+
