@@ -11,6 +11,8 @@ public class Startup : MonoBehaviour {
 
     public TMPro.TMP_Dropdown priorityTypeDropdown;
 
+    public static bool startupComplete = false;
+
     private void Start() {
         try {
             var mode = GetArg("-mode");
@@ -97,6 +99,7 @@ public class Startup : MonoBehaviour {
             Debug.Log("[Settings] Using default weights for priority calculations");
         }
 
+        startupComplete = true;
     }
 
     public static IEnumerator StartNetwork(string mode) {

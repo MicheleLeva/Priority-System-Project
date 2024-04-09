@@ -10,13 +10,13 @@ namespace Utils {
         // ---------- PRIORITY CALC PROPERTIES -------------+
         // -------------------------------------------------+
         // Multiplication Weights (their sum must be 1)
-        public static double distancePercentageWeight = 0.35d;
-        public static double screenPresencePercentageWeight = 0.45d;
-        public static double distanceFromScreenCenterPercWeight = 0.2d;
+        public static double distancePercentageWeight = 0.33d;
+        public static double screenPresencePercentageWeight = 0.34d;
+        public static double distanceFromScreenCenterPercWeight = 0.33d;
 
         //in priority calculation this is the highest priority
         //the greater it is than the number of NetObjects in the scene, the lesser is the chance to have collisions
-        // (two or more NetObjects with the same priority --> race condition)
+        // (two or more NetObjects with the same priority --> race condition when added to the priority queue)
         public static int highestPriority = 1000000;
 
         // -------------------------------------------------+

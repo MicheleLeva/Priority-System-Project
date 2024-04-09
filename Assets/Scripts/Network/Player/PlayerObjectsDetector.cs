@@ -100,6 +100,10 @@ namespace Network.Player {
             longestDistance = 0;
             var playerPos = NetworkManager.Singleton.ConnectedClients[_clientId].PlayerObject.transform.GetChild(0).position;
 
+            //added semaphore to wait for global project parameters initializations (such as Priority Weights)
+            while (!Startup.startupComplete)
+                yield return null;
+
             foreach (NetObject netObject in ServerObjectsLoader.netObjects.Values)
             {
                 //precalculate distance from further object for priority calculaction normalization purposes
@@ -107,9 +111,10 @@ namespace Network.Player {
                 var distance = (objPos - playerPos).magnitude;
                 longestDistance = distance > longestDistance ? distance : longestDistance;
 
-                //initialize all objects to the highest priority
-                _objectQueue.Add(_clientId, netObject.gameObject, Priority.highestPriority);
-                netObject.priority = Priority.highestPriority;
+                //initialize all objects to only distance based priority
+                int priority = Priority.highestPriority + Priority.CalcWithDistance(distance / longestDistance);
+                _objectQueue.Add(_clientId, netObject.gameObject, priority);
+                netObject.priority = priority;
             }
 
             yield return null;
@@ -272,7 +277,7 @@ namespace Network.Player {
                     var distance = (objPos - playerPos).magnitude;
                     double distancePercentage = distance / longestDistance;
 
-                    int priority = Priority.CalcWithDistance(distancePercentage);
+                    int priority = Priority.highestPriority + Priority.CalcWithDistance(distancePercentage);
                     ServerObjectsLoader.netObjects[o.id].priority = priority;
                     _objectQueue.UpdatePriority(_clientId, ServerObjectsLoader.netObjects[o.id].gameObject, priority);
                 }
