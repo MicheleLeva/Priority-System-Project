@@ -97,7 +97,6 @@ namespace Network.Player {
 
         private IEnumerator ObjectPrioritySettingCycle()
         {
-            longestDistance = 0;
             var playerPos = NetworkManager.Singleton.ConnectedClients[_clientId].PlayerObject.transform.GetChild(0).position;
 
             //added semaphore to wait for global project parameters initializations (such as Priority Weights)
@@ -161,7 +160,7 @@ namespace Network.Player {
         private void UpdateObjectPriorities()
         {
 
-            var selected = frustumCollidingObjectsIds;
+            HashSet<int> selected = frustumCollidingObjectsIds;
             if (selected.Count() > 0)
             {
                 /*
@@ -170,13 +169,15 @@ namespace Network.Player {
                         .ToHashSet();
                 */
 
-                List<NetObject> netObjects = selected.
+                List<NetObject> visibleNetObjects = selected.
                 Where(k => ServerObjectsLoader.netObjects.ContainsKey(k)).Select(k => ServerObjectsLoader.netObjects[k]).ToList();
 
-                var playerPos = NetworkManager.Singleton.ConnectedClients[_clientId].PlayerObject.transform.GetChild(0)
+                List<NetObject> invisibleNetObjects = ServerObjectsLoader.netObjects.Values.Except(visibleNetObjects).ToList();
+
+                Vector3 playerPos = NetworkManager.Singleton.ConnectedClients[_clientId].PlayerObject.transform.GetChild(0)
                     .position;
 
-                foreach (NetObject networkObj in netObjects)
+                foreach (NetObject networkObj in visibleNetObjects)
                 {
                     var objPos = networkObj.GetComponent<MeshRenderer>().bounds.ClosestPoint(playerPos);
                     var distance = (objPos - playerPos).magnitude;
@@ -239,8 +240,18 @@ namespace Network.Player {
                     networkObj.priority = priority;
                 }
 
+                foreach (NetObject networkObj in invisibleNetObjects)
+                {
+                    var objPos = networkObj.GetComponent<MeshRenderer>().bounds.ClosestPoint(playerPos);
+                    var distance = (objPos - playerPos).magnitude;
+                    double distancePercentage = distance / longestDistance;
+                    int priority = Priority.highestPriority + Priority.CalcWithDistance(distancePercentage);
+
+                    ServerObjectsLoader.netObjects[networkObj.id].priority = priority;
+                    _objectQueue.UpdatePriority(_clientId, ServerObjectsLoader.netObjects[networkObj.id].gameObject, priority);
+                }
                 //sentObjects.AddRange(selected);
-                Debug.Log($"Number of FrustumCollidingObjectsIds = {frustumCollidingObjectsIds.Count()}, Selected {selected.Count()} objects, sent {netObjects.Count()} objects");
+                //Debug.Log($"Number of FrustumCollidingObjectsIds = {frustumCollidingObjectsIds.Count()}, Selected {selected.Count()} objects, sent {netObjects.Count()} objects");
 
             }
         }
@@ -271,6 +282,7 @@ namespace Network.Player {
                 {
                     frustumCollidingObjectsIds.Remove(o.id);
 
+                    /*
                     var playerPos = NetworkManager.Singleton.ConnectedClients[_clientId].PlayerObject.transform.GetChild(0)
                     .position;
                     var objPos = o.GetComponent<MeshRenderer>().bounds.ClosestPoint(playerPos);
@@ -280,6 +292,7 @@ namespace Network.Player {
                     int priority = Priority.highestPriority + Priority.CalcWithDistance(distancePercentage);
                     ServerObjectsLoader.netObjects[o.id].priority = priority;
                     _objectQueue.UpdatePriority(_clientId, ServerObjectsLoader.netObjects[o.id].gameObject, priority);
+                    */
                 }
                     
             }

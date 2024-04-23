@@ -119,7 +119,7 @@ namespace Network.SpawnUpdater {
             // Attach Components
             foreach (var id in sObj.GetComponentIds()
                          .Where(id => id != 0)) {
-                AttachComponentToObject(id, sObj);
+                Task t = AttachComponentToObject(id, sObj);
             }
 
             //Set World object as parent

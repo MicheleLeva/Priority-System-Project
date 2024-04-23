@@ -181,10 +181,16 @@ namespace Network.Objects {
             {
                 rendererBounds = r.bounds;
                 if (isSentToClient)
+                {
                     Gizmos.color = Color.green;
+                    //Gizmos.DrawWireSphere(rendererBounds.center, rendererBounds.size.magnitude);
+                }                 
                 else
-                    Gizmos.color = priorityGradient.Evaluate(priority / (float)highestPriority);
-                Gizmos.DrawWireCube(rendererBounds.center, rendererBounds.size);
+                {
+                    Gizmos.color = priorityGradient.Evaluate(priority / (2f * highestPriority));
+                    Gizmos.DrawWireCube(rendererBounds.center, rendererBounds.size);
+                }
+                    
                 /*
                 if (error)
                 {

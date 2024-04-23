@@ -38,9 +38,10 @@ namespace Network.Server {
                         GameObject obj = _objectQueue.Get(client);
                         obj.GetComponent<NetObject>().isSentToClient = true;
                         sm.SendObject(client, obj);
+                        Debug.Log("Send Object");
                     }
                 }
-
+                
                 yield return new WaitForSeconds(Prefs.Singleton.sendDelay);
             }
         }

@@ -8,7 +8,7 @@ import matplotlib.image as mpimg
 import pandas as pd
 
 root = f"hdrvdp-3.0.7\\test_move_weights"
-test_number = 1
+test_number = 4
 
 def barplot(i, SP, AOI):
     # set width of bar 
@@ -51,6 +51,7 @@ def detectionPlot(dirSP, SPweights, dirAOI, speed):
     for i in range(0, len(SPweights)):
         detectionSPLists.append(get_from_xlsx(f"{dirSP}\\{SPweights[i]}\\{speed}\\vdp-hdr-detection.xlsx"))
     weightsDetectionsDict = {k : v for k, v in zip(SPweights, detectionSPLists)}
+    weights = ["1_0_0", "0_1_0", "0_0_1", "0.5_0.5_0", "0.5_0_0.5", "0_0.5_0.5", "0.33_0.34_0.33"]
     
     #start plot
     fig, axs = plt.subplots(3, 3)
@@ -62,9 +63,13 @@ def detectionPlot(dirSP, SPweights, dirAOI, speed):
 
     for x in range(0, 3):
         for y in range(0, 3):
-            if ((2*y + x) > len(weightsDetectionsDict)): break
-
-            weight = list(weightsDetectionsDict.keys())[2*y + x]
+            #print(f"x = {x}, y = {y}, total = {3*y+x}, weightdi = {len(weightsDetectionsDict)}")
+            
+            if ((3*y + x) >= len(weightsDetectionsDict)): 
+                break
+            
+            #weight = list(weightsDetectionsDict.keys())[2*y + x]
+            weight = weights[3*y + x]
             detectionSP = weightsDetectionsDict[weight]
 
             #we only want the differences in the graph for better visual clarity
@@ -100,6 +105,7 @@ def qualityPlot(dirSP, SPweights, dirAOI, speed):
     for i in range(0, len(SPweights)):
         qualitySPLists.append(get_from_xlsx(f"{dirSP}\\{SPweights[i]}\\{speed}\\vdp-hdr-quality.xlsx"))
     weightsQualityDict = {k : v for k, v in zip(SPweights, qualitySPLists)}
+    weights = ["1_0_0", "0_1_0", "0_0_1", "0.5_0.5_0", "0.5_0_0.5", "0_0.5_0.5", "0.33_0.34_0.33"]
     
     #start plot
     fig, axs = plt.subplots(3, 3)
@@ -111,9 +117,11 @@ def qualityPlot(dirSP, SPweights, dirAOI, speed):
 
     for x in range(0, 3):
         for y in range(0, 3):
-            if ((2*y + x) > len(weightsQualityDict)): break
+            if ((3*y + x) >= len(weightsQualityDict)): 
+                break
 
-            weight = list(weightsQualityDict.keys())[2*y + x]
+            #weight = list(weightsQualityDict.keys())[2*y + x]
+            weight = weights[3*y + x]
             qualitySP = weightsQualityDict[weight]
 
             #we only want the differences in the graph for better visual clarity
@@ -149,6 +157,7 @@ def de2000Plot(dirSP, SPweights, dirAOI, speed):
     for i in range(0, len(SPweights)):
         de2000SPLists.append(get_from_xlsx(f"{dirSP}\\{SPweights[i]}\\{speed}\\vdp-hdr-quality.xlsx"))
     weightsDe2000Dict = {k : v for k, v in zip(SPweights, de2000SPLists)}
+    weights = ["1_0_0", "0_1_0", "0_0_1", "0.5_0.5_0", "0.5_0_0.5", "0_0.5_0.5", "0.33_0.34_0.33"]
     
     #start plot
     fig, axs = plt.subplots(3, 3)
@@ -160,9 +169,11 @@ def de2000Plot(dirSP, SPweights, dirAOI, speed):
 
     for x in range(0, 3):
         for y in range(0, 3):
-            if ((2*y + x) > len(weightsDe2000Dict)): break
+            if ((3*y + x) >= len(weightsDe2000Dict)): 
+                break
 
-            weight = list(weightsDe2000Dict.keys())[2*y + x]
+            #weight = list(weightsDe2000Dict.keys())[2*y + x]
+            weight = weights[3*y + x]
             de2000SP = weightsDe2000Dict[weight]
 
             #we only want the differences in the graph for better visual clarity
