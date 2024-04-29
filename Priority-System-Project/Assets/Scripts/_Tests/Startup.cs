@@ -3,6 +3,7 @@ using Network;
 using Unity.Netcode;
 using Unity.Netcode.Transports.UTP;
 using UnityEngine;
+using UnityEngine.XR.Interaction.Toolkit.Inputs.Simulation;
 using Utils;
 using Application = UnityEngine.Application;
 
@@ -14,7 +15,17 @@ public class Startup : MonoBehaviour {
     public static bool startupComplete = false;
 
     private void Start() {
-        try {
+
+#if !UNITY_EDITOR
+        XRDeviceSimulator deviceSimulator =  FindObjectOfType<XRDeviceSimulator>();
+        if (deviceSimulator != null)
+        {
+            deviceSimulator.enabled = false;
+        }
+#endif
+
+        try
+        {
             var mode = GetArg("-mode");
             StartCoroutine(StartNetwork(mode));
         }
