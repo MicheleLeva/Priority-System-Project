@@ -8,7 +8,7 @@ import matplotlib.image as mpimg
 import pandas as pd
 
 root = f"hdrvdp-3.0.7\\test_move_weights"
-test_number = 4
+test_number = 7
 
 def barplot(i, SP, AOI):
     # set width of bar 

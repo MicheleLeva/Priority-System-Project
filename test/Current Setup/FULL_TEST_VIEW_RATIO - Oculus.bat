@@ -4,7 +4,7 @@
 set SendKeys=CScript //nologo //E:JScript "%~F0"
 set time=30
 
-REM set exe=%userprofile%\Documents\UNIMI\TESI\Progetto\Builds\Test\PrioritySystemProject.exe
+set exe=%userprofile%\Documents\UNIMI\TESI\Progetto\Builds\Test\PrioritySystemProject.exe
 REM set logs=C:\Users\Wolly\AppData\LocalLow\DefaultCompany\PrioritySystemProject\LOGS
 set logs="Questo PC\Quest 3\Memoria condivisa interna\Android\data\com.DefaultCompany.VR3\files\LOGS"
 
