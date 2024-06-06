@@ -40,6 +40,7 @@ public class Logger : MonoBehaviour {
         Move = move;
         _instance = this;
         _transform = Camera.main!.transform;
+        
         try {
             Unity.XR.Oculus.Performance.TrySetDisplayRefreshRate(120);
             // StartCoroutine(Startup.StartNetwork("client"));
@@ -74,8 +75,7 @@ public class Logger : MonoBehaviour {
             StartCoroutine(LogLoopClient());
 
         if (objTimes)
-            CreateFile("obj_times.csv");
-
+            CreateFile("/obj_times.csv");
 
         if (clientScreen) {
             Directory.CreateDirectory($"{_dir}/SCREEN/");
@@ -126,7 +126,6 @@ public class Logger : MonoBehaviour {
 
                 if (IsCurrentAppInstanceVR())
                     {
-                        Debug.Log("Enable VR");
                         ScreenCapture.CaptureScreenshot($"LOGS/SCREEN/screen_{GetTime()}.png");
                     }            
                 else
@@ -157,7 +156,7 @@ public class Logger : MonoBehaviour {
             else
                 ScreenCapture.CaptureScreenshot($"{_dir}/SCREEN/screen_{GetTime()}.png");
 
-            //Debug.Log($"{_dir}/SCREEN/screen_{GetTime()}.png");
+            Debug.Log($"{_dir}/SCREEN/screen_{GetTime()}.png");
         }
     }
 

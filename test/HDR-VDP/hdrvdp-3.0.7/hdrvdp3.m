@@ -355,6 +355,8 @@ end
 if metric_par.use_gpu
     test = gpuArray(test);
     reference = gpuArray(reference);
+else
+    warning('no gpu')
 end
 
 % The parameters overwrite the options

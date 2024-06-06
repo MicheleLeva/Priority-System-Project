@@ -10,12 +10,13 @@ public class ConsoleToGUI : MonoBehaviour {
     /// <summary>
     /// Is the GUI active?
     /// </summary>
-    private bool openGUI = false;
+    private bool openGUI = true;
 
     private bool assignedToClient;
 
     public TextMeshProUGUI consoleLog;
     public Canvas clientCanvas;
+    public GameObject scrollView;
 
     void OnEnable() {
         Application.logMessageReceived += Log;
@@ -30,7 +31,7 @@ public class ConsoleToGUI : MonoBehaviour {
     public void Log(string logString, string stackTrace, LogType type) {
         output = logString;
         stack = stackTrace;
-        myLog = output + "\n" + myLog;
+        myLog = output + "\n\n" + myLog;
         if (myLog.Length > 5000) {
             myLog = myLog.Substring(0, 4000);
         }
@@ -54,6 +55,11 @@ public class ConsoleToGUI : MonoBehaviour {
         {
             consoleLog.text = myLog;
         }
+    }
+
+    public void ToggleDebugLog()
+    {
+        scrollView.SetActive(!scrollView.activeSelf);
     }
 
     void OnGUI() {

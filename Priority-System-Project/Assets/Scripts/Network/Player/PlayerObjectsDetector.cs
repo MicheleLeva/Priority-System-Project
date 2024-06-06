@@ -28,7 +28,9 @@ namespace Network.Player {
         private List<NetObject> _previous = new();
         private ulong _clientId;
         private Camera playerCamera;
-        float screenArea;
+        private Vector3 centerOfScreen;
+        private float screenDiagonalDistance;
+        private float screenArea;
         private Prefs _prefs;
 
         /// <summary>
@@ -36,11 +38,10 @@ namespace Network.Player {
         /// </summary>
         //set of objects currently colliding with the frustumCollider
         private HashSet<int> frustumCollidingObjectsIds = new HashSet<int>();
-        //set of objects already sent to the client
-        private HashSet<int> sentObjects = new HashSet<int>();
 
-        private int sendToQueueMax = 10;
-        public static double longestDistance;
+        private double longestDistance;
+        private int highestAssignedPriority;
+        private int lowestAssignedPriority;
 
         Prefs.PriorityType priorityType;
 
@@ -74,6 +75,10 @@ namespace Network.Player {
             NetworkObject playerObj = NetworkManager.Singleton.ConnectedClients[_clientId].PlayerObject;
             playerCamera = playerObj.GetComponentInChildren<Camera>() ?? Camera.main;
             screenArea = playerCamera.pixelHeight * playerCamera.pixelWidth;
+
+            centerOfScreen = new(playerCamera.pixelWidth / 2f, playerCamera.pixelHeight / 2f, 0);
+            screenDiagonalDistance = Vector3.Distance(centerOfScreen, new Vector3(playerCamera.pixelWidth, playerCamera.pixelHeight));
+
             Debug.Log($"Screen: pixelHeight = {playerCamera.pixelHeight}, pixelWidth = {playerCamera.pixelWidth}, area = {screenArea}");
 
             if (priorityType.Equals(Prefs.PriorityType.CircularAreasOfInterest))
@@ -81,7 +86,6 @@ namespace Network.Player {
             if (priorityType.Equals(Prefs.PriorityType.ScreenPresence))
                 StartCoroutine(ObjectPrioritySettingCycle());
         }
-
 
         // -------------------> Send Objects CYCLE
         /// <summary>
@@ -112,6 +116,7 @@ namespace Network.Player {
 
                 //initialize all objects to only distance based priority
                 int priority = Priority.highestPriority + Priority.CalcWithDistance(distance / longestDistance);
+                UpdateHiLoAssignedPriority(priority);
                 _objectQueue.Add(_clientId, netObject.gameObject, priority);
                 netObject.priority = priority;
             }
@@ -159,6 +164,8 @@ namespace Network.Player {
         /// </summary>
         private void UpdateObjectPriorities()
         {
+            highestAssignedPriority = 0;
+            lowestAssignedPriority = 1000000000;
 
             HashSet<int> selected = frustumCollidingObjectsIds;
             if (selected.Count() > 0)
@@ -228,15 +235,21 @@ namespace Network.Player {
 
                     //Gets the distance of the object from the center of screen
                     float distanceFromScreenCenterPercentage = DistanceFromScreenCenterPercentage(
-                        playerCamera.WorldToScreenPoint(networkObj.transform.position), playerCamera.pixelWidth, playerCamera.pixelHeight);
+                        playerCamera.WorldToScreenPoint(networkObj.transform.position));
 
                     //calculate priority
                     int priority = Priority.CalcWithScreenPresence(screenPresencePercentage, distancePercentage, distanceFromScreenCenterPercentage);
 
-                    //Debug.LogWarning($"{networkObj.name}: distance = {distance}, screenPresencePercentage = {screenPresencePercentage}" + $", Priority = {priority}");
+                    
+                    if (priority > 20000000)
+                    {
+                        Debug.LogError($"{networkObj.name}: distance = {distance}, screenPresencePercentage = {screenPresencePercentage}," +
+                        $"distanceFromScreenCenterPercentage = {distanceFromScreenCenterPercentage} --> Priority = {priority}");
+                    }
 
                     //update object in queue with calculated priority
                     _objectQueue.UpdatePriority(_clientId, networkObj.gameObject, priority);
+                    UpdateHiLoAssignedPriority(priority);
                     networkObj.priority = priority;
                 }
 
@@ -245,15 +258,31 @@ namespace Network.Player {
                     var objPos = networkObj.GetComponent<MeshRenderer>().bounds.ClosestPoint(playerPos);
                     var distance = (objPos - playerPos).magnitude;
                     double distancePercentage = distance / longestDistance;
-                    int priority = Priority.highestPriority + Priority.CalcWithDistance(distancePercentage);
+                    int priority = Priority.highestPriority + Priority.CalcWithDistance(distancePercentage);                 
 
                     ServerObjectsLoader.netObjects[networkObj.id].priority = priority;
                     _objectQueue.UpdatePriority(_clientId, ServerObjectsLoader.netObjects[networkObj.id].gameObject, priority);
+                    UpdateHiLoAssignedPriority(priority);
                 }
-                //sentObjects.AddRange(selected);
                 //Debug.Log($"Number of FrustumCollidingObjectsIds = {frustumCollidingObjectsIds.Count()}, Selected {selected.Count()} objects, sent {netObjects.Count()} objects");
 
+                UpdateGlobalAssignedPriorities();
             }
+        }
+
+        private void UpdateHiLoAssignedPriority(int priority)
+        {
+            if(highestAssignedPriority < priority)
+                highestAssignedPriority = priority;
+            if (lowestAssignedPriority > priority)
+                lowestAssignedPriority = priority;
+            //Debug.Log($"highest assigned priority is {highestAssignedPriority}");
+        }
+
+        private void UpdateGlobalAssignedPriorities()
+        {
+            GlobalVariables.Instance.highestAssignedPriority = highestAssignedPriority;
+            GlobalVariables.Instance.lowestAssignedPriority = lowestAssignedPriority;
         }
 
         /// <summary>
@@ -265,8 +294,11 @@ namespace Network.Player {
             if (priorityType.Equals(Prefs.PriorityType.ScreenPresence))
             {
                 if (other.gameObject.TryGetComponent<NetObject>(out var o))
-                    if (!ServerObjectsLoader.netObjects[o.id].isSentToClient)
-                        frustumCollidingObjectsIds.Add(o.id);
+                {
+                    o.inFrustum = true;
+                    frustumCollidingObjectsIds.Add(o.id);
+                }
+                    
             }
         }
 
@@ -280,6 +312,7 @@ namespace Network.Player {
             {
                 if (other.gameObject.TryGetComponent<NetObject>(out var o))
                 {
+                    o.inFrustum = false;
                     frustumCollidingObjectsIds.Remove(o.id);
 
                     /*
@@ -409,19 +442,19 @@ namespace Network.Player {
 
                     if (screenPresencePercentage >= 1 || screenPresencePercentage <= 0)
                     {
-                        networkObj.error = true;
+                        networkObj.inFrustum = true;
                         Debug.LogWarning($"Screen presence percentage of the object {networkObj.name} is weird = " + $"{screenPresencePercentage}! ");
                     }
 
                     if (bottomLeftP.z < 0 && topRightP.z < 0)
                     {
-                        networkObj.error = true;
+                        networkObj.inFrustum = true;
                         Debug.LogWarning($"This object {networkObj.name} is behind the player!");
                     }
                         
                     //Gets the distance of the object from the center of screen
                     float distanceFromScreenCenterPercentage = DistanceFromScreenCenterPercentage(
-                        playerCamera.WorldToScreenPoint(networkObj.transform.position), playerCamera.pixelWidth, playerCamera.pixelHeight);
+                        playerCamera.WorldToScreenPoint(networkObj.transform.position));
 
                     //calculate priority
                     int priority = Priority.CalcWithScreenPresence(screenPresencePercentage, distance, distanceFromScreenCenterPercentage);
@@ -441,13 +474,17 @@ namespace Network.Player {
         /// Calculates how long is the distance of the object from the center of screen in percentage of the max distance
         /// </summary>
         /// <returns>Percentage of distance from screen center</returns>
-        private float DistanceFromScreenCenterPercentage(Vector3 objectPositionOnScreen, float cameraWidth, float cameraHeight)
+        private float DistanceFromScreenCenterPercentage(Vector3 objectPositionOnScreen)
         {
             objectPositionOnScreen.z = 0; //depth is not needed
-            Vector3 centerOfScreen = new(cameraWidth / 2f, cameraHeight / 2f, 0);
             float distance = Vector3.Distance(centerOfScreen, objectPositionOnScreen);
-            float maxDistance = Vector3.Distance(centerOfScreen, new Vector3(cameraWidth, cameraHeight));
-            return distance / maxDistance;
+            float distanceFromScreenCenterPercentage = distance / screenDiagonalDistance;
+            if (distanceFromScreenCenterPercentage > 1)
+            {
+                distanceFromScreenCenterPercentage = 1;
+            } 
+            
+            return distanceFromScreenCenterPercentage;
         }
 
         /// <summary>

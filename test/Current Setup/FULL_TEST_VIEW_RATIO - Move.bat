@@ -138,11 +138,6 @@ REM Close the server with screen presence priority type
 REM TASKKILL /IM %exe%
 TASKKILL /FI "Windowtitle eq PrioritySystemProject" /F /T
 
-echo === EVALUATION OF TEST %t% VIEW RATIO:
-echo.
-
-python.exe .\view_ratio_priorityType_Move.py .\Test-%t%-SP\ .\Test-%t%-AOI\
-
 pause
 
 @end

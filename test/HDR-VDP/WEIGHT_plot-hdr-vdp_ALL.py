@@ -8,7 +8,7 @@ import matplotlib.image as mpimg
 import pandas as pd
 
 root = f"hdrvdp-3.0.7\\test_move_weights"
-test_number = 7
+test_number = 6
 
 def barplot(i, SP, AOI):
     # set width of bar 
@@ -155,7 +155,7 @@ def de2000Plot(dirSP, SPweights, dirAOI, speed):
 
     de2000SPLists = []
     for i in range(0, len(SPweights)):
-        de2000SPLists.append(get_from_xlsx(f"{dirSP}\\{SPweights[i]}\\{speed}\\vdp-hdr-quality.xlsx"))
+        de2000SPLists.append(get_from_xlsx(f"{dirSP}\\{SPweights[i]}\\{speed}\\deltaE2000.xlsx"))
     weightsDe2000Dict = {k : v for k, v in zip(SPweights, de2000SPLists)}
     weights = ["1_0_0", "0_1_0", "0_0_1", "0.5_0.5_0", "0.5_0_0.5", "0_0.5_0.5", "0.33_0.34_0.33"]
     
@@ -188,7 +188,7 @@ def de2000Plot(dirSP, SPweights, dirAOI, speed):
             axs[x, y].bar(br1, zSP, color ='r', width = barWidth, label ='SP') 
             axs[x, y].bar(br2 , zAOI, color ='b', width = barWidth, label ='AOI')
             axs[x, y].set_title(f'{weight}')
-            axs[x, y].set_ylim([0, 100])
+            axs[x, y].set_ylim([0, 5])
 
     # out
     if not os.path.isdir(f'Test{test_number}\\{speed}'):

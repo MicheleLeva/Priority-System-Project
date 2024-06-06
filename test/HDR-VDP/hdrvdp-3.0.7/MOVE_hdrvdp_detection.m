@@ -1,7 +1,9 @@
 function X = MOVE_hdrvdp_detection()
 
 root = "test_move";
-dirs = [root+"/Test-4-SP", root+"/Test-4-AOI"];
+dirs = [root+"/Test-1-SP", root+"/Test-AOI"];
+%dirs = [root+"/Test-1-SP"];
+%dirs = [root+"/Test-AOI"];
 fullDir = root+"/FullMoving";
 
 % Display parameters

@@ -80,6 +80,6 @@ namespace Utils {
             distancePercentageWeight = w1;
             screenPresencePercentageWeight = w2;
             distanceFromScreenCenterPercWeight = w3;
-    }
+        }
     }
 }

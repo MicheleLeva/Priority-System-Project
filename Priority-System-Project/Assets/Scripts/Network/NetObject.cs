@@ -4,6 +4,7 @@ using UnityEngine;
 using Utils;
 using Network.Server;
 using Network.Player;
+using Unity.Collections.LowLevel.Unsafe;
 
 
 namespace Network.Objects {
@@ -39,12 +40,12 @@ namespace Network.Objects {
         /// Has the object been sent to at least one client?
         /// </summary>
         public bool isSentToClient = false;
-        /// <summary>
-        /// Debug bool
-        /// </summary>
+        
+        //debug variables
+        public bool inFrustum;
         public bool error;
-
-        private Gradient priorityGradient = new Gradient();
+        private Gradient priorityGradientGreenToYellow = new Gradient();
+        private Gradient priorityGradientYellowToRed = new Gradient(); 
 
         private void Start() {
             if (NetworkManager.Singleton.IsServer) {
@@ -67,6 +68,25 @@ namespace Network.Objects {
                 rendererBoundsCorners[6] = new Vector3(rendererBoundsCorners[1].x, rendererBoundsCorners[0].y, rendererBoundsCorners[1].z);
                 rendererBoundsCorners[7] = new Vector3(rendererBoundsCorners[1].x, rendererBoundsCorners[1].y, rendererBoundsCorners[0].z);
             }
+
+            //Gradient preparation for Unity Editor debugging
+            // Blend color from green at 0% to yellow at 0% to red at 100%
+            var gradientColorGreenToYellow = new GradientColorKey[2];
+            gradientColorGreenToYellow[0] = new GradientColorKey(Color.green, 0.0f);
+            gradientColorGreenToYellow[1] = new GradientColorKey(Color.yellow, 1.0f);
+
+            // Blend color from green at 0% to yellow at 0% to red at 100%
+            var gradientColorYellowToRed = new GradientColorKey[2];
+            gradientColorYellowToRed[0] = new GradientColorKey(Color.yellow, 0.0f);
+            gradientColorYellowToRed[1] = new GradientColorKey(Color.red, 1.0f);
+
+            // Alpha stays opaque
+            var alphas = new GradientAlphaKey[2];
+            alphas[0] = new GradientAlphaKey(1.0f, 1.0f);
+            alphas[1] = new GradientAlphaKey(1.0f, 1.0f);
+
+            priorityGradientGreenToYellow.SetKeys(gradientColorGreenToYellow, alphas);
+            priorityGradientYellowToRed.SetKeys(gradientColorYellowToRed, alphas);
         }
 
         public void AddNetObjectToGlobalDict()
@@ -157,47 +177,44 @@ namespace Network.Objects {
             
         }
 
-        public Vector3 colliderSize;
-        public Vector3 rendererSize;
-
         private void OnDrawGizmos()
         {
             Bounds rendererBounds;
-            int highestPriority = Priority.highestPriority;
 
-            // Blend color from yellow at 0% to red at 100%
-            var gradientColors = new GradientColorKey[2];
-            gradientColors[0] = new GradientColorKey(Color.yellow, 0.0f);
-            gradientColors[1] = new GradientColorKey(Color.red, 1.0f);
-
-            // Alpha stays opaque
-            var alphas = new GradientAlphaKey[2];
-            alphas[0] = new GradientAlphaKey(1.0f, 1.0f);
-            alphas[1] = new GradientAlphaKey(1.0f, 1.0f);
-
-            priorityGradient.SetKeys(gradientColors, alphas);
+            int h = GlobalVariables.Instance != null ? GlobalVariables.Instance.highestAssignedPriority : 1;
+            int l = GlobalVariables.Instance != null ? GlobalVariables.Instance.lowestAssignedPriority : 0;
+            float m = l + ((h - l) / 2f);
 
             if (TryGetComponent(out Renderer r))
             {
                 rendererBounds = r.bounds;
-                if (isSentToClient)
+
+                if (GlobalVariables.Instance.seeFrustum)
                 {
-                    Gizmos.color = Color.green;
-                    //Gizmos.DrawWireSphere(rendererBounds.center, rendererBounds.size.magnitude);
-                }                 
-                else
+                    if (inFrustum)
+                    {
+                        Gizmos.color = Color.red;
+                        Gizmos.DrawWireCube(rendererBounds.center, rendererBounds.size);
+                    }
+                    else
+                    {
+                        Gizmos.color = Color.green;
+                        Gizmos.DrawWireCube(rendererBounds.center, rendererBounds.size);
+                    }
+                }
+
+                if (GlobalVariables.Instance.seePriorities)
                 {
-                    Gizmos.color = priorityGradient.Evaluate(priority / (2f * highestPriority));
+                    //gate for sanity
+                    if (priority <= 0) priority = 1;
+
+                    if (priority < m) // find gradient for first half
+                        Gizmos.color = priorityGradientGreenToYellow.Evaluate((priority - l) / ((h - l) / 2f));
+                    else //find gradient for second half
+                        Gizmos.color = priorityGradientYellowToRed.Evaluate((priority - m) / ((h - l) / 2f));
                     Gizmos.DrawWireCube(rendererBounds.center, rendererBounds.size);
                 }
-                    
-                /*
-                if (error)
-                {
-                    Gizmos.color = Color.red;
-                    Gizmos.DrawWireMesh(GetComponent<Mesh>());
-                }*/
-                rendererSize = rendererBounds.size;
+
             }
 
         }

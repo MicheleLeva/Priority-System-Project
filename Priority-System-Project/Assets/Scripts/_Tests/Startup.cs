@@ -1,9 +1,13 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using Network;
 using Unity.Netcode;
 using Unity.Netcode.Transports.UTP;
 using UnityEngine;
+using UnityEngine.InputSystem.XR;
+using UnityEngine.XR.Interaction.Toolkit;
 using UnityEngine.XR.Interaction.Toolkit.Inputs.Simulation;
+using UnityEngine.XR.Interaction.Toolkit.UI;
 using Utils;
 using Application = UnityEngine.Application;
 
@@ -14,31 +18,58 @@ public class Startup : MonoBehaviour {
 
     public static bool startupComplete = false;
 
+    public TrackedPoseDriver trackedPoseDriver;
+    public GameObject leftController;
+    public GameObject rightController;
+
     private void Start() {
 
-#if !UNITY_EDITOR
-        XRDeviceSimulator deviceSimulator =  FindObjectOfType<XRDeviceSimulator>();
-        if (deviceSimulator != null)
-        {
-            deviceSimulator.enabled = false;
-        }
+#if UNITY_EDITOR
+        Debug.Log("[Settings] Editor: Enabling Device Simulator!");
+
+            XRDeviceSimulator deviceSimulator = FindObjectOfType<XRDeviceSimulator>();
+            if (deviceSimulator != null)
+            {
+                deviceSimulator.enabled = true;
+            }
 #endif
 
         try
         {
             var mode = GetArg("-mode");
+            //if we are testing the client we are disabling the hands for the screenshot
+            if (mode.Equals("client"))
+            {
+                FindObjectOfType<XRUIInputModule>().enabled = false;
+                var l = GameObject.Find("LeftHand Controller");
+                l.GetComponent<XRBaseController>().enabled = false;
+                l.transform.position += new Vector3(0, -10, 0);
+                var r = GameObject.Find("RightHand Controller");
+                r.GetComponent<XRBaseController>().enabled = false;
+                r.transform.position += new Vector3(0, -10, 0);
+            }
+
             StartCoroutine(StartNetwork(mode));
+            Debug.Log($"[Settings] Setting mode {mode}");
         }
         catch {
-            Debug.Log("[Settings] no app mode");
+            //if we are not testing we are enabling the TrackedPoseDriver and the controllers
+            //trackedPoseDriver.enabled = true;
+            Debug.Log("[Settings] No app mode");
         }
 
         try {
             var time = int.Parse(GetArg("-time"));
             if (!Logger.Move)
+            {
                 StartCoroutine(KillAfter(time));
+                Debug.Log($"[Settings] Setting auto kill after {time} seconds");
+            }
             else
+            {
                 FindObjectOfType<Follower>().OnPathCompleted += KillApp;
+                Debug.Log($"[Settings] Setting auto kill after completion of path");
+            }
         }
         catch {
             Debug.Log("[Settings] no timer");
@@ -47,6 +78,7 @@ public class Startup : MonoBehaviour {
         try {
             var showPriority = int.Parse(GetArg("-show"));
             ShowOnlyPriority = showPriority;
+            Debug.Log($"[Settings] Show Priority");
         }
         catch {
             Debug.Log("[Settings] no show priority");
@@ -54,6 +86,7 @@ public class Startup : MonoBehaviour {
 
         try {
             Prefs.Singleton.aoi = GetArg("-no-priority") == null;
+            Debug.Log($"[Settings] Priority set");
         }
         catch {
             Debug.Log("[Settings] error");
@@ -62,6 +95,7 @@ public class Startup : MonoBehaviour {
         try {
             var delay = int.Parse(GetArg("-delay"));
             Prefs.Singleton.sendDelay = delay;
+            Debug.Log($"[Settings] Delay set: {delay}s");
         }
         catch {
             Debug.Log("[Settings] no delay: default 0.06s");
@@ -80,7 +114,8 @@ public class Startup : MonoBehaviour {
                 Prefs.Singleton.PriorityTypeValueChanged(1);
                 priorityTypeDropdown.value = 1;
             }
-                
+            Debug.Log($"[Settings] Priority type set: {priorityType}");
+
         }
         catch
         {
@@ -89,8 +124,21 @@ public class Startup : MonoBehaviour {
 
         try
         {
-            string getLocalIp = GetArg("-SetLocalIP");
-            FindObjectOfType<NetworkUI>().SetIP(NetworkUI.GetLocalIPAddress());
+            var setIp = GetArg("-SetIP");
+            if (setIp != null)
+            {
+                if (setIp.Equals("local"))
+                {
+                    FindObjectOfType<NetworkUI>().SetIP(NetworkUI.GetLocalIPAddress());
+                    Debug.Log($"[Settings] Local ip set");
+                } else
+                {
+                    FindObjectOfType<NetworkUI>().SetIP(setIp);
+                    Debug.Log($"[Settings] Ip set from parameters: {setIp}");
+                }
+            }
+            else
+                Debug.Log("[Settings] Using default ip");
         }
         catch 
         {
@@ -104,21 +152,43 @@ public class Startup : MonoBehaviour {
             double d3 = double.Parse(GetArg("-D3"));
 
             Priority.SetWeights(d1, d2, d3);
+            Debug.Log($"[Settings] Weights for priority calculations set: {d1}, {d2}, {d3}");
         }
         catch
         {
             Debug.Log("[Settings] Using default weights for priority calculations");
         }
 
+        try
+        {
+            bool fullScene = GetArg("-FullScene") != null;
+            if (fullScene)
+            {
+                FindObjectOfType<Follower>().waitForCompleteSceneLoading = true;
+                Debug.Log($"[Settings] Wait for complete scene loading");
+            }
+            else
+                Debug.Log("[Settings] Standard scene loading");
+        }
+        catch
+        {
+            Debug.Log("[Settings] Standard scene loading");
+        }
+
         startupComplete = true;
     }
 
-    public static IEnumerator StartNetwork(string mode) {
+    public IEnumerator StartNetwork(string mode) {
         yield return new WaitForSeconds(1);
         if (mode == "server")
             FindObjectOfType<NetworkUI>().StartServer();
         if (mode == "client")
+        {
+            Camera.main.transform.rotation = Quaternion.identity;
+            Camera.main.transform.position = new Vector3(-0.3480972f, 1.12f, -5.517212f);
+            trackedPoseDriver.enabled = false;
             FindObjectOfType<NetworkUI>().StartClient();
+        } 
     }
 
     public static IEnumerator KillAfter(int time) {
@@ -129,8 +199,19 @@ public class Startup : MonoBehaviour {
 
     public void KillApp()
     {
+        Debug.Log("Closing app");
+
         Logger.SaveFiles();
-        Application.Quit();
+
+        if (Logger.IsCurrentAppInstanceVR())
+        {
+            AndroidJavaObject activity = new AndroidJavaClass("com.unity3d.player.UnityPlayer").GetStatic<AndroidJavaObject>("currentActivity");
+            activity.Call("finish");
+        }
+        else
+        {
+            Application.Quit();
+        }
     }
 
     public static string GetArg(string name) {
@@ -142,7 +223,22 @@ public class Startup : MonoBehaviour {
             AndroidJavaObject currentActivity = UnityPlayer.GetStatic<AndroidJavaObject>("currentActivity");
 
             AndroidJavaObject intent = currentActivity.Call<AndroidJavaObject>("getIntent");
-            args = intent.Call<string>("getDataString").Split(',');
+            //AndroidJavaObject intent = currentActivity.Call<AndroidJavaObject>("parseIntent");
+
+            //Debug.Log("intent URI: " + intent.Call<string>("toUri", 0).ToString());
+
+            //args = intent.Call<string>("getDataString").Split(',');
+
+            string parsedString = intent.Call<string>("getStringExtra", "unity");
+            args = parsedString.Split('/');
+
+            string argsToPrint = "";
+            foreach(string s in args)
+            {
+                argsToPrint += s + ", ";
+            }
+            Debug.Log("args = " + argsToPrint);
+
         }
         else
             args = System.Environment.GetCommandLineArgs();
@@ -156,4 +252,5 @@ public class Startup : MonoBehaviour {
         return null;
 
     }
+
 }

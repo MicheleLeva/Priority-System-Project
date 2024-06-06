@@ -2,11 +2,13 @@
 @echo off
 
 set SendKeys=CScript //nologo //E:JScript "%~F0"
-set time=30
+set time=120
+set mtime=30
 
 set exe=%userprofile%\Documents\UNIMI\TESI\Progetto\Builds\Test\PrioritySystemProject.exe
 REM set logs=C:\Users\Wolly\AppData\LocalLow\DefaultCompany\PrioritySystemProject\LOGS
-set logs="Questo PC\Quest 3\Memoria condivisa interna\Android\data\com.DefaultCompany.VR3\files\LOGS"
+set logs="/sdcard/Android/data/com.DefaultCompany.PrioritySystemProject/files/LOGS"
+set mlogs="C:\Users\Wolly\AppData\Roaming\odh\device-metrics\2G0YC1ZF9K0C48"
 
 set /p t=Enter the test number:
 echo.
@@ -26,22 +28,29 @@ echo ======== %x% Mbps ==========
 %SendKeys% "^{%k%}"
 echo running...
 REM start /W "" "%exe%" -mode client -time %time% -priorityType %pt%
-adb shell am start -n com.DefaultCompany.VR3/com.unity3d.player.UnityPlayerActivity -esa "unity" "-mode,client,-time,10,-priorityType,sp"
-echo copying...
-robocopy "%logs%" ".\Test-%t%-SP\%x%" /E /is /it > nul
+adb shell am start -n com.DefaultCompany.PrioritySystemProject/com.unity3d.player.UnityPlayerActivity -e unity "-mode/client/-time/10"
+sleep %time%
+mkdir ".\Test-%t%-SP\%x%"
+adb pull %logs% ".\Test-%t%-SP\%x%"
+sleep %mtime%
+REM adb pull %mlogs% ".\Test-%t%-SP\%x%"
+robocopy "%mlogs%" ".\Test-%t%-SP\%x%" /E /is /it > nul
 echo done
 %SendKeys% "^{%k%}"
 echo.
-
 
 set x=20
 set k="F3"
 echo ======== %x% Mbps ==========
 %SendKeys% "^{%k%}"
 echo running...
-start /W "" "%exe%" -mode client -time %time% -priorityType %pt%
-echo copying...
-robocopy "%logs%" ".\Test-%t%-SP\%x%" /E /is /it > nul
+adb shell am start -n com.DefaultCompany.PrioritySystemProject/com.unity3d.player.UnityPlayerActivity -e unity "-mode/client/-time/10"
+sleep %time%
+mkdir ".\Test-%t%-SP\%x%"
+adb pull %logs% ".\Test-%t%-SP\%x%"
+sleep %mtime%
+REM adb pull %mlogs% ".\Test-%t%-SP\%x%"
+robocopy "%mlogs%" ".\Test-%t%-SP\%x%" /E /is /it > nul
 echo done
 %SendKeys% "^{%k%}"
 echo.
@@ -51,9 +60,13 @@ set k="F2"
 echo ======== %x% Mbps ==========
 %SendKeys% "^{%k%}"
 echo running...
-start /W "" "%exe%" -mode client -time %time% -priorityType %pt%
-echo copying...
-robocopy "%logs%" ".\Test-%t%-SP\%x%" /E /is /it > nul
+adb shell am start -n com.DefaultCompany.PrioritySystemProject/com.unity3d.player.UnityPlayerActivity -e unity "-mode/client/-time/10"
+sleep %time%
+mkdir ".\Test-%t%-SP\%x%"
+adb pull %logs% ".\Test-%t%-SP\%x%"
+sleep %mtime%
+REM adb pull %mlogs% ".\Test-%t%-SP\%x%"
+robocopy "%mlogs%" ".\Test-%t%-SP\%x%" /E /is /it > nul
 echo done
 %SendKeys% "^{%k%}"
 echo.
@@ -63,9 +76,13 @@ set k="F1"
 echo ======== %x% Mbps ==========
 %SendKeys% "^{%k%}"
 echo running...
-start /W "" "%exe%" -mode client -time %time% -priorityType %pt%
-echo copying...
-robocopy "%logs%" ".\Test-%t%-SP\%x%" /E /is /it > nul
+adb shell am start -n com.DefaultCompany.PrioritySystemProject/com.unity3d.player.UnityPlayerActivity -e unity "-mode/client/-time/10"
+sleep %time%
+mkdir ".\Test-%t%-SP\%x%"
+adb pull %logs% ".\Test-%t%-SP\%x%"
+sleep %mtime%
+REM adb pull %mlogs% ".\Test-%t%-SP\%x%"
+robocopy "%mlogs%" ".\Test-%t%-SP\%x%" /E /is /it > nul
 echo done
 %SendKeys% "^{%k%}"
 echo.
@@ -90,22 +107,29 @@ set k="F4"
 echo ======== %x% Mbps ==========
 %SendKeys% "^{%k%}"
 echo running...
-start /W "" "%exe%" -mode client -time %time% -priorityType %pt%
-echo copying...
-robocopy "%logs%" ".\Test-%t%-AOI\%x%" /E /is /it > nul
+adb shell am start -n com.DefaultCompany.PrioritySystemProject/com.unity3d.player.UnityPlayerActivity -e unity "-mode/client/-time/10"
+sleep %time%
+mkdir ".\Test-%t%-AOI\%x%"
+adb pull %logs% ".\Test-%t%-AOI\%x%"
+sleep %mtime%
+REM adb pull %mlogs% ".\Test-%t%-SP\%x%"
+robocopy "%mlogs%" ".\Test-%t%-SP\%x%" /E /is /it > nul
 echo done
 %SendKeys% "^{%k%}"
 echo.
-
 
 set x=20
 set k="F3"
 echo ======== %x% Mbps ==========
 %SendKeys% "^{%k%}"
 echo running...
-start /W "" "%exe%" -mode client -time %time% -priorityType %pt%
-echo copying...
-robocopy "%logs%" ".\Test-%t%-AOI\%x%" /E /is /it > nul
+adb shell am start -n com.DefaultCompany.PrioritySystemProject/com.unity3d.player.UnityPlayerActivity -e unity "-mode/client/-time/10"
+sleep %time%
+mkdir ".\Test-%t%-AOI\%x%"
+adb pull %logs% ".\Test-%t%-AOI\%x%"
+sleep %mtime%
+REM adb pull %mlogs% ".\Test-%t%-SP\%x%"
+robocopy "%mlogs%" ".\Test-%t%-SP\%x%" /E /is /it > nul
 echo done
 %SendKeys% "^{%k%}"
 echo.
@@ -115,9 +139,13 @@ set k="F2"
 echo ======== %x% Mbps ==========
 %SendKeys% "^{%k%}"
 echo running...
-start /W "" "%exe%" -mode client -time %time% -priorityType %pt%
-echo copying...
-robocopy "%logs%" ".\Test-%t%-AOI\%x%" /E /is /it > nul
+adb shell am start -n com.DefaultCompany.PrioritySystemProject/com.unity3d.player.UnityPlayerActivity -e unity "-mode/client/-time/10"
+sleep %time%
+mkdir ".\Test-%t%-AOI\%x%"
+adb pull %logs% ".\Test-%t%-AOI\%x%"
+sleep %mtime%
+REM adb pull %mlogs% ".\Test-%t%-SP\%x%"
+robocopy "%mlogs%" ".\Test-%t%-SP\%x%" /E /is /it > nul
 echo done
 %SendKeys% "^{%k%}"
 echo.
@@ -127,9 +155,13 @@ set k="F1"
 echo ======== %x% Mbps ==========
 %SendKeys% "^{%k%}"
 echo running...
-start /W "" "%exe%" -mode client -time %time% -priorityType %pt%
-echo copying...
-robocopy "%logs%" ".\Test-%t%-AOI\%x%" /E /is /it > nul
+adb shell am start -n com.DefaultCompany.PrioritySystemProject/com.unity3d.player.UnityPlayerActivity -e unity "-mode/client/-time/10"
+sleep %time%
+mkdir ".\Test-%t%-AOI\%x%"
+adb pull %logs% ".\Test-%t%-AOI\%x%"
+sleep %mtime%
+REM adb pull %mlogs% ".\Test-%t%-SP\%x%"
+robocopy "%mlogs%" ".\Test-%t%-SP\%x%" /E /is /it > nul
 echo done
 %SendKeys% "^{%k%}"
 echo.
@@ -137,6 +169,8 @@ echo.
 REM Close the server with screen presence priority type
 REM TASKKILL /IM %exe%
 TASKKILL /FI "Windowtitle eq PrioritySystemProject" /F /T
+
+
 
 echo === EVALUATION OF TEST %t% VIEW RATIO:
 echo.

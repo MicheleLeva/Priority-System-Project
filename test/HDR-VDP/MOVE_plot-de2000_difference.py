@@ -2,9 +2,9 @@ import csv
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
+import sys
 
-root = f"hdrvdp-3.0.7\\test_move"
-test_number = 4
+root = f"hdrvdp-3.0.7\\test_oculus"
 
 def barplot(i, SP, AOI):
     # set width of bar 
@@ -16,7 +16,7 @@ def barplot(i, SP, AOI):
     #AOI
 
     ax = plt.gca()
-    ax.set_ylim([0, 100])
+    ax.set_ylim([0, 3])
      
     # Set position of bar on X axis 
     br1 = np.arange(len(SP)) 
@@ -77,6 +77,7 @@ def dir_process(dir: str, dir1: str, i: int):
 
 if __name__ == "__main__":
     for i in [4, 10, 20, 40]:
+        test_number = sys.argv[1]
         dir = root + f"\\Test-{test_number}-SP\\{i}\\"
-        dir1 = root + f"\\Test-{test_number}-AOI\\{i}\\"
+        dir1 = root + f"\\Test-AOI\\{i}\\"
         dir_process(dir, dir1, i)

@@ -2,9 +2,10 @@ import csv
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
+import argparse
 
-root = f"hdrvdp-3.0.7\\test_move"
-test_number = 4
+root = f"hdrvdp-3.0.7\\test_oculus"
+test_number = None
 
 def barplot(i, SP, AOI):
     # set width of bar 
@@ -78,6 +79,10 @@ def dir_process(dir: str, dir1: str, i: int):
 
 if __name__ == "__main__":
     for i in [4, 10, 20, 40]:
+        parser = argparse.ArgumentParser()
+        parser.add_argument("test_number", type=int)
+        args = parser.parse_args()
+        test_number = args.test_number
         dir = root + f"\\Test-{test_number}-SP\\{i}\\"
-        dir1 = root + f"\\Test-{test_number}-AOI\\{i}\\"
+        dir1 = root + f"\\Test-AOI\\{i}\\"
         dir_process(dir, dir1, i)

@@ -38,7 +38,11 @@ namespace Network {
         }
 
         public void StartClient() {
-            ConvertUnityTransportAddress(NetworkManager.Singleton.NetworkConfig.NetworkTransport as UnityTransport);
+            Debug.Log("Start client");
+            
+            //ConvertUnityTransportAddress(NetworkManager.Singleton.NetworkConfig.NetworkTransport as UnityTransport);
+
+            Debug.Log("Deactivate canvas");
             gameObject.SetActive(false);
             GameObject.Find("Canvas Server").SetActive(false);
 
@@ -46,6 +50,7 @@ namespace Network {
             //ClientCanvas.gameObject.SetActive(true);
             //consoleToGUI.switchGUI();
 
+            Debug.Log("networkmanager start client");
             NetworkManager.Singleton.StartClient();
         }
 

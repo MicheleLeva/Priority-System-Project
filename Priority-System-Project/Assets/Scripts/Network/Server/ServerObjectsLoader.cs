@@ -23,7 +23,6 @@ namespace Network.Server {
                     GameObject gObject =  Instantiate(res, world.GetComponent<Transform>());
                     NetObject netObject = gObject.GetComponent<NetObject>();
                 }
-                Debug.Log($"number of objects in netObjects Dict = {netObjects.Count}");
             };
         }
 

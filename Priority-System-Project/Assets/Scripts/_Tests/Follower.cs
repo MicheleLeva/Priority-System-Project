@@ -11,6 +11,8 @@ public class Follower : MonoBehaviour {
     private float _distanceTravelled;
 
     public bool waitForCompleteSceneLoading;
+    private float waitTimer;
+    private float waitTime = 120f;
 
     private int _steps = 60;
     private float _stepLength;
@@ -20,11 +22,16 @@ public class Follower : MonoBehaviour {
     public event Action OnPathCompleted;
     private bool pathCompleted = false;
 
+    private float yPosition;
+
     public void Start()
     {
         _stepLength = pathCreator.path.length / _steps;
         Debug.Log($"Path length = {pathCreator.path.length}, step length = {_stepLength}");
         _distanceSinceLastStep = 0;
+        yPosition = transform.position.y;
+        Debug.Log($"yPosition is {yPosition}");
+        waitTimer = waitTime;
     }
 
     void Update() {
@@ -38,15 +45,25 @@ public class Follower : MonoBehaviour {
         {
             pathCompleted = true;
             OnPathCompleted?.Invoke();
-        } 
+        }
 
-        if (waitForCompleteSceneLoading && FindObjectsOfType<NetObject>().Length < 490) return;
+        if (waitForCompleteSceneLoading)
+        {
+            if (waitTimer >= 0)
+            {
+                waitTimer -= Time.deltaTime;
+                return;
+            }
+        }
 
         _distanceTravelled += speed * Time.deltaTime;
         _distanceSinceLastStep += speed * Time.deltaTime;
         var t = transform;
-        t.position = pathCreator.path.GetPointAtDistance(_distanceTravelled);
+        t.position = pathCreator.path.GetPointAtDistance(_distanceTravelled); 
         t.rotation = pathCreator.path.GetRotationAtDistance(_distanceTravelled);
+        //if we have disabled the trackedposedriver we set the vertical offset of the player camera from the floor to the one recored on Start
+        /*if (!FindObjectOfType<UnityEngine.InputSystem.XR.TrackedPoseDriver>().enabled)
+            t.position = new Vector3(t.position.x, yPosition, t.position.z);*/
         t.localRotation = Quaternion.Euler(t.localRotation.eulerAngles + new Vector3(0, 0, 90));
 
         //Call on first frame to get initial perspective
