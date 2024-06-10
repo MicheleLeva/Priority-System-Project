@@ -156,7 +156,7 @@ public class Logger : MonoBehaviour {
             else
                 ScreenCapture.CaptureScreenshot($"{_dir}/SCREEN/screen_{GetTime()}.png");
 
-            Debug.Log($"{_dir}/SCREEN/screen_{GetTime()}.png");
+            Debug.Log($"{_dir}/SCREEN/screen_{GetTime()}.png, frameCount = {Time.frameCount}");
         }
     }
 

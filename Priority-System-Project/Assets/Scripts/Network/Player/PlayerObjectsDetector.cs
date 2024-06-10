@@ -253,12 +253,14 @@ namespace Network.Player {
                     networkObj.priority = priority;
                 }
 
+                int visibleObjectsHighestPriority = highestAssignedPriority;
+
                 foreach (NetObject networkObj in invisibleNetObjects)
                 {
                     var objPos = networkObj.GetComponent<MeshRenderer>().bounds.ClosestPoint(playerPos);
                     var distance = (objPos - playerPos).magnitude;
                     double distancePercentage = distance / longestDistance;
-                    int priority = Priority.highestPriority + Priority.CalcWithDistance(distancePercentage);                 
+                    int priority = visibleObjectsHighestPriority + Priority.CalcWithDistance(distancePercentage);                 
 
                     ServerObjectsLoader.netObjects[networkObj.id].priority = priority;
                     _objectQueue.UpdatePriority(_clientId, ServerObjectsLoader.netObjects[networkObj.id].gameObject, priority);
