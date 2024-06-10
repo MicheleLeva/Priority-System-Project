@@ -5,6 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using Unity.Netcode;
 using UnityEditor;
 using UnityEngine;
@@ -47,11 +48,15 @@ public class Follower : MonoBehaviour {
             string[] rotation = data[i * 3 + 1].Split(',');
             string[] localRotation = data[i * 3 + 2].Split(',');
 
-            for (int k = 0; k < 3; k++)
+            System.Globalization.CultureInfo culture = Thread.CurrentThread.CurrentCulture;
+            if (culture.NumberFormat.NumberDecimalSeparator == ",")
             {
-                segment[k] = segment[k].Replace('.', ',');
-                rotation[k] = rotation[k].Replace('.', ',');
-                localRotation[k] = localRotation[k].Replace('.', ',');
+                for (int k = 0; k < 3; k++)
+                {
+                    segment[k] = segment[k].Replace('.', ',');
+                    rotation[k] = rotation[k].Replace('.', ',');
+                    localRotation[k] = localRotation[k].Replace('.', ',');
+                }
             }
 
             //Debug.Log($"segment {i} is {segment[0]}");

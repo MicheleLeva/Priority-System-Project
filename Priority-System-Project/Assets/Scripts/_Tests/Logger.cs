@@ -60,6 +60,8 @@ public class Logger : MonoBehaviour {
         _dir = Application.persistentDataPath + "/LOGS";
         Directory.CreateDirectory(_dir);
 
+	Debug.Log($"dir is {_dir}");
+
         if (serverFps) {
             _transport = (UnityTransport) NetworkManager.Singleton.NetworkConfig.NetworkTransport;
             //Directory.CreateDirectory(_dir);
