@@ -1,7 +1,7 @@
 function X = MOVE_hdrvdp_detection()
 
 root = "test_move";
-dirs = [root+"/Test-1-SP", root+"/Test-AOI"];
+dirs = [root+"/Test-2-SP", root+"/Test-2-AOI"];
 %dirs = [root+"/Test-1-SP"];
 %dirs = [root+"/Test-AOI"];
 fullDir = root+"/FullMoving";
@@ -27,6 +27,10 @@ for i = 1:perspNum
     fulls{i} = double(full);
 end
 
+[height, width, ~] = size(imread(fullDir + "/" + imgs(1)));
+ppd = hdrvdp_pix_per_deg(30, [width height], 0.5 );
+disp("ppd is " + ppd);
+
 for i = 1:length(dirs)
     f = figure('visible','off');
     d1 = dirs(i);
@@ -44,7 +48,7 @@ for i = 1:length(dirs)
         for j = 1:length(imgs)
             img = double(imread(d + imgs(j))) / (2^8-1);
             img = hdrvdp_gog_display_model(img, Y_peak, contrast, gamma, E_ambient );
-            diff = hdrvdp3('detection', img, fulls{j}, 'rgb-native', 30, []);
+            diff = hdrvdp3('detection', img, fulls{j}, 'rgb-native', ppd, []);
             imagesc(diff.P_map);
             clim([0,1]);
             colorbar;

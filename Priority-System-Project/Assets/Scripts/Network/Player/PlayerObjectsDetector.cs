@@ -101,18 +101,19 @@ namespace Network.Player {
 
         private IEnumerator ObjectPrioritySettingCycle()
         {
-            var playerPos = NetworkManager.Singleton.ConnectedClients[_clientId].PlayerObject.transform.GetChild(0).position;
+            
 
             //added semaphore to wait for global project parameters initializations (such as Priority Weights)
             while (!Startup.startupComplete)
                 yield return null;
 
-            foreach (NetObject netObject in ServerObjectsLoader.netObjects.Values)
+            UpdateFurthestObjectDistance();
+
+            var playerPos = NetworkManager.Singleton.ConnectedClients[_clientId].PlayerObject.transform.GetChild(0).position;
+            foreach (NetObject netObject in ServerObjectsLoader.netObjects.Values) 
             {
-                //precalculate distance from further object for priority calculaction normalization purposes
                 var objPos = netObject.GetComponent<MeshRenderer>().bounds.ClosestPoint(playerPos);
                 var distance = (objPos - playerPos).magnitude;
-                longestDistance = distance > longestDistance ? distance : longestDistance;
 
                 //initialize all objects to only distance based priority
                 int priority = Priority.highestPriority + Priority.CalcWithDistance(distance / longestDistance);
@@ -124,8 +125,11 @@ namespace Network.Player {
             yield return null;
             while (true)
             {
-                //only objects in the frustum of vision will have their priorities updated
+                //only objects in the view frustum will have their priorities updated
                 UpdateObjectPriorities();
+
+                //this has to be done at each loop as the further object's distance changes depending on the player position
+                UpdateFurthestObjectDistance();
                 yield return null;
             }
         }
@@ -269,6 +273,20 @@ namespace Network.Player {
                 //Debug.Log($"Number of FrustumCollidingObjectsIds = {frustumCollidingObjectsIds.Count()}, Selected {selected.Count()} objects, sent {netObjects.Count()} objects");
 
                 UpdateGlobalAssignedPriorities();
+            }
+        }
+
+        /// <summary>
+        /// Calculates the distance to the player from the further object for priority calculaction normalization purposes
+        /// </summary>
+        private void UpdateFurthestObjectDistance()
+        {
+            var playerPos = NetworkManager.Singleton.ConnectedClients[_clientId].PlayerObject.transform.GetChild(0).position;
+            foreach (NetObject netObject in ServerObjectsLoader.netObjects.Values)
+            {
+                var objPos = netObject.GetComponent<MeshRenderer>().bounds.ClosestPoint(playerPos);
+                var distance = (objPos - playerPos).magnitude;
+                longestDistance = distance > longestDistance ? distance : longestDistance;
             }
         }
 

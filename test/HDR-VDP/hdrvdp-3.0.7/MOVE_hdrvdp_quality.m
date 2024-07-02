@@ -1,7 +1,7 @@
 function X = MOVE_hdrvdp_quality ()
 
 root = "test_move";
-dirs = [root+"/Test-1-SP", root+"/Test-AOI"];
+dirs = [root+"/Test-2-SP", root+"/Test-AOI"];
 %dirs = [root+"/Test-1-SP"];
 %dirs = [root+"/Test-AOI"];
 fullDir = root+"/FullMoving";

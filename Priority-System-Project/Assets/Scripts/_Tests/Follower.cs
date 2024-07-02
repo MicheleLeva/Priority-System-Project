@@ -21,13 +21,13 @@ public class Follower : MonoBehaviour {
     private float waitTimer;
     private float waitTime = 120f;
 
-    private int _steps = 60;
+    private int _steps = 120;
     [SerializeField]
-    private Vector3[] _segments = new Vector3[60];
+    private Vector3[] _segments = new Vector3[120];
     [SerializeField]
-    private Vector3[] _rotations = new Vector3[60];
+    private Vector3[] _rotations = new Vector3[120];
     [SerializeField]
-    private Vector3[] _localRotations = new Vector3[60];
+    private Vector3[] _localRotations = new Vector3[120];
     private float _stepLength;
     private int _currentStep = 0;
     public event Action OnStepMade;
@@ -42,7 +42,7 @@ public class Follower : MonoBehaviour {
         string dataString = moveTestData.text;
         List<string> data = dataString.Replace("(", string.Empty).Replace(")", string.Empty).Trim().Split(';').ToList();
         //Debug.Log($"data is {data[0]}, datacount is {data.Count}");
-        for(int i = 0; i < 60; i++)
+        for(int i = 0; i < 120; i++)
         {
             string[] segment = data[i*3].Split(',');
             string[] rotation = data[i * 3 + 1].Split(',');
@@ -66,7 +66,7 @@ public class Follower : MonoBehaviour {
         }
 
         if (!waitForCompleteSceneLoading)
-            waitTime = 2;
+            waitTime = 3;
 
         //Debug.Log($"Path length = {pathCreator.path.length}, step length = {_stepLength}");
         waitTimer = waitTime;

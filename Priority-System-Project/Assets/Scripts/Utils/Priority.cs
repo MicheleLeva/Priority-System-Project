@@ -51,7 +51,7 @@ namespace Utils {
         /// <param name="screenPresencePercentage">Percentage of screen occupied by the object. Higher the value, more of the screen is occupied.
         /// Higher value --> higher priority -> We subtract it from 1</param>
         /// /// <param name="distancePercentage">Distance from player to object expressed in percentage of distance from furthest object. 
-        /// Lower value --> higher priority -> No manipulation</param>
+        /// Lower value --> higher priority -> No manipulation required</param>
         /// <param name="distanceFromScreenCenterPerc">Distance of the object from center of screen expressed in percentage of distance from center of screen to a corner.
         /// Lower value --> higher priority --> No manipulation required</param>
         /// <returns></returns>
@@ -61,7 +61,7 @@ namespace Utils {
             //multiplication by 100 is to distribute better the priorities with weights due to integer casting
             //int priority = (int)(100f * distancePercentage * 100f * (1f - screenPresencePercentage) * 100f * distanceFromScreenCenterPerc);
             
-            int priority = Mathf.RoundToInt((float) (highestPriority * (distanceFromScreenCenterPercWeight * distancePercentage + 
+            int priority = Mathf.RoundToInt((float) (highestPriority * (distancePercentageWeight * distancePercentage + 
                 screenPresencePercentageWeight * (1f - screenPresencePercentage) + distanceFromScreenCenterPercWeight * distanceFromScreenCenterPerc)));
 
             /*Debug.Log($"Calculating priority: distancePercentage {distancePercentage}, screenPresencePercentage {screenPresencePercentage}, " +
@@ -72,7 +72,7 @@ namespace Utils {
 
         public static int CalcWithDistance(double distancePercentage) 
         {
-            return Mathf.RoundToInt((float)(highestPriority * distanceFromScreenCenterPercWeight * distancePercentage));
+            return Mathf.RoundToInt((float)(highestPriority * distancePercentage));
         }
 
         public static void SetWeights(double w1, double w2, double w3)

@@ -3,8 +3,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 import sys
+import os
 
-root = f"hdrvdp-3.0.7\\test_oculus"
+root = f"hdrvdp-3.0.7\\test_move"
 
 def barplot(i, SP, AOI):
     # set width of bar 
@@ -16,7 +17,7 @@ def barplot(i, SP, AOI):
     #AOI
 
     ax = plt.gca()
-    ax.set_ylim([0, 3])
+    ax.set_ylim([0, 5])
      
     # Set position of bar on X axis 
     br1 = np.arange(len(SP)) 
@@ -37,6 +38,8 @@ def barplot(i, SP, AOI):
     # out
     fig = plt.gcf()
     #fig.set_size_inches(7, 5)
+    if (not os.path.isdir(f'Test{test_number}')):
+        os.mkdir(f'Test{test_number}')
     out = f'Test{test_number}\\DE2000-Difference-{i}Mbps-hdr-vdp.png'
     print(f"--> OUTPUT: {out}\n")
     fig.savefig(out, dpi=100)

@@ -20,8 +20,12 @@ namespace Network.Server {
                 var resources = Resources.LoadAll<GameObject>("Env");
                 Debug.Log($"number of objects in resources = {resources.Length}");
                 foreach (var res in resources) {
-                    GameObject gObject =  Instantiate(res, world.GetComponent<Transform>());
-                    NetObject netObject = gObject.GetComponent<NetObject>();
+                    //if (res.name != "Road_Straight")
+                    {
+                        GameObject gObject = Instantiate(res, world.GetComponent<Transform>());
+                        NetObject netObject = gObject.GetComponent<NetObject>();
+                    }
+                    
                 }
             };
         }

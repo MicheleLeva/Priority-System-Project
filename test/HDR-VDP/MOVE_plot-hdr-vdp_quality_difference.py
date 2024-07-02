@@ -3,14 +3,15 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 import sys
+import os
 
-root = f"hdrvdp-3.0.7\\test_oculus"
+root = f"hdrvdp-3.0.7\\test_move"
 
 def barplot(i, SP, AOI):
     # set width of bar 
     barWidth = 0.25
     fig = plt.subplots(figsize =(12, 8)) 
-     
+
     # set height of bar 
     #SP
     #AOI
@@ -21,7 +22,7 @@ def barplot(i, SP, AOI):
     # Set position of bar on X axis 
     br1 = np.arange(len(SP)) 
     br2 = [x + barWidth for x in br1] 
-     
+
     # Make the plot
     plt.bar(br1, SP, color ='r', width = barWidth, edgecolor ='grey', label ='SP') 
     plt.bar(br2, AOI, color ='b', width = barWidth, edgecolor ='grey', label ='AOI') 
@@ -30,13 +31,15 @@ def barplot(i, SP, AOI):
     plt.xlabel('Screenshot', fontweight ='bold', fontsize = 15) 
     plt.ylabel('Quality Difference', fontweight ='bold', fontsize = 15) 
     plt.xticks([r + barWidth for r in range(len(SP))], [a for a in range(len(SP))])
-     
+
     #plt.legend()
     #plt.show()
 
     # out
     fig = plt.gcf()
     #fig.set_size_inches(7, 5)
+    if (not os.path.isdir(f'Test{test_number}')):
+        os.mkdir(f'Test{test_number}')
     out = f'Test{test_number}\\QualityDifference-{i}Mbps-hdr-vdp.png'
     print(f"--> OUTPUT: {out}\n")
     fig.savefig(out, dpi=100)

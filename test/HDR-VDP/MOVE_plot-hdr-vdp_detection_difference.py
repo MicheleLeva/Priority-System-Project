@@ -3,8 +3,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 import argparse
+import os
 
-root = f"hdrvdp-3.0.7\\test_oculus"
+root = f"hdrvdp-3.0.7\\test_move"
 test_number = None
 
 def barplot(i, SP, AOI):
@@ -38,6 +39,8 @@ def barplot(i, SP, AOI):
     # out
     fig = plt.gcf()
     #fig.set_size_inches(7, 5)
+    if (not os.path.isdir(f'Test{test_number}')):
+        os.mkdir(f'Test{test_number}')
     out = f'Test{test_number}\\DetectionDifference-{i}Mbps-hdr-vdp.png'
     print(f"--> OUTPUT: {out}\n")
     fig.savefig(out, dpi=100)
@@ -64,15 +67,10 @@ def dir_process(dir: str, dir1: str, i: int):
     y = get_from_xlsx(csv)
     y1 = get_from_xlsx(csv1)
 
-    #print(i)
-    #print('\n')
+    #print(zip(y, y1))
     z = [x - x1 if x >= x1 else 0 for x, x1 in zip(y, y1)]
-    #print(f"len of z is {len(z)} \n")
-    #print(z)
     z1 = [x1 - x if x1 >= x else 0 for x, x1 in zip(y, y1)]
-    #print(f"len of z1 is {len(z1)} \n")
-    #print(z1)
-    #print('\n')
+
 
 
     barplot(i, z, z1)
@@ -84,5 +82,6 @@ if __name__ == "__main__":
         args = parser.parse_args()
         test_number = args.test_number
         dir = root + f"\\Test-{test_number}-SP\\{i}\\"
-        dir1 = root + f"\\Test-AOI\\{i}\\"
+        #dir1 = root + f"\\Test-AOI\\{i}\\"
+        dir1 = root + f"\\Test-{test_number}-AOI\\{i}\\"
         dir_process(dir, dir1, i)

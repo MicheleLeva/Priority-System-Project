@@ -193,12 +193,12 @@ namespace Network.Objects {
                 {
                     if (inFrustum)
                     {
-                        Gizmos.color = Color.red;
+                        Gizmos.color = Color.green;
                         Gizmos.DrawWireCube(rendererBounds.center, rendererBounds.size);
                     }
                     else
                     {
-                        Gizmos.color = Color.green;
+                        Gizmos.color = Color.red;
                         Gizmos.DrawWireCube(rendererBounds.center, rendererBounds.size);
                     }
                 }
