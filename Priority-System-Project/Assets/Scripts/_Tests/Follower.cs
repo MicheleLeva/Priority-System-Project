@@ -97,7 +97,7 @@ public class Follower : MonoBehaviour {
             return;
 
         var t = transform;
-        if (Vector3.Distance(t.position, _segments[_currentStep]) <= 1f)
+        if (Vector3.Distance(t.position, _segments[_currentStep]) <= 1f && Logger.instance.clientScreen)
         {
             StartCoroutine(StepMade());
             //Debug.Log($"New step made, current step = {_currentStep}");

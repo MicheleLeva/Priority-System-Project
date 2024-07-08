@@ -19,8 +19,11 @@ public class Startup : MonoBehaviour {
     public static bool startupComplete = false;
 
     public TrackedPoseDriver trackedPoseDriver;
+    public GameObject locomotionSystem;
     public GameObject leftController;
     public GameObject rightController;
+
+    public GameObject canvasClient;
 
     private void Start() {
 
@@ -33,6 +36,22 @@ public class Startup : MonoBehaviour {
                 deviceSimulator.enabled = true;
             }
 #endif
+
+        try
+        {
+            bool debugClient = GetArg("-DebugClient") != null;
+            if (debugClient)
+            {
+                Debug.Log($"[Settings] Client canvas activated");
+                canvasClient.SetActive(true);
+            }
+            else
+                Debug.Log("[Settings] No client canvas");
+        }
+        catch
+        {
+            Debug.Log("[Settings] No Client canvas");
+        }
 
         try
         {
@@ -53,9 +72,26 @@ public class Startup : MonoBehaviour {
             Debug.Log($"[Settings] Setting mode {mode}");
         }
         catch {
-            //if we are not testing we are enabling the TrackedPoseDriver and the controllers
-            //trackedPoseDriver.enabled = true;
+            //if we are not testing we are enabling the TrackedPoseDriver and the locomotion system
+            trackedPoseDriver.enabled = true;
+            locomotionSystem.SetActive(true);
             Debug.Log("[Settings] No app mode");
+        }
+
+        try
+        {
+            bool move = GetArg("-Move") != null;
+            if (move)
+            {
+                Debug.Log($"[Settings] Player movement on path activated");
+                Logger.Move = true;
+            }
+            else
+                Debug.Log("[Settings] Free player movement");
+        }
+        catch
+        {
+            Debug.Log("[Settings] Free player movement");
         }
 
         try {

@@ -1,0 +1,1 @@
+adb shell am start -n com.DefaultCompany.PrioritySystemProject/com.unity3d.player.UnityPlayerActivity -e unity "-mode/client/-time/10"

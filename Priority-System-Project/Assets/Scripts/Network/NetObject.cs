@@ -5,6 +5,7 @@ using Utils;
 using Network.Server;
 using Network.Player;
 using Unity.Collections.LowLevel.Unsafe;
+using System.Diagnostics.Tracing;
 
 
 namespace Network.Objects {
@@ -205,14 +206,23 @@ namespace Network.Objects {
 
                 if (GlobalVariables.Instance.seePriorities)
                 {
-                    //gate for sanity
-                    if (priority <= 0) priority = 1;
+                    if (isSentToClient)
+                    {
+                        Gizmos.color = Color.white;
+                        Gizmos.DrawWireCube(rendererBounds.center, rendererBounds.size);
+                    } 
+                    else
+                    {
+                        //gate for sanity
+                        if (priority <= 0) priority = 1;
 
-                    if (priority < m) // find gradient for first half
-                        Gizmos.color = priorityGradientGreenToYellow.Evaluate((priority - l) / ((h - l) / 2f));
-                    else //find gradient for second half
-                        Gizmos.color = priorityGradientYellowToRed.Evaluate((priority - m) / ((h - l) / 2f));
-                    Gizmos.DrawWireCube(rendererBounds.center, rendererBounds.size);
+                        if (priority < m) // find gradient for first half
+                            Gizmos.color = priorityGradientGreenToYellow.Evaluate((priority - l) / ((h - l) / 2f));
+                        else //find gradient for second half
+                            Gizmos.color = priorityGradientYellowToRed.Evaluate((priority - m) / ((h - l) / 2f));
+                        Gizmos.DrawWireCube(rendererBounds.center, rendererBounds.size);
+                    }
+                    
                 }
 
             }

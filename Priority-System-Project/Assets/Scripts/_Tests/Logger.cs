@@ -32,13 +32,13 @@ public class Logger : MonoBehaviour {
     private static Transform _transform;
     public static readonly Dictionary<int, float> ObjDelays = new();
 
-    public static bool ObjTimes => _instance.objTimes;
-    private static Logger _instance;
+    public static bool ObjTimes => instance.objTimes;
+    public static Logger instance;
     public static string ObjTimesStr;
 
     private void Start() {
         Move = move;
-        _instance = this;
+        instance = this;
         _transform = Camera.main!.transform;
         
         try {
@@ -60,7 +60,7 @@ public class Logger : MonoBehaviour {
         _dir = Application.persistentDataPath + "/LOGS";
         Directory.CreateDirectory(_dir);
 
-	Debug.Log($"dir is {_dir}");
+	    //Debug.Log($"dir is {_dir}");
 
         if (serverFps) {
             _transport = (UnityTransport) NetworkManager.Singleton.NetworkConfig.NetworkTransport;

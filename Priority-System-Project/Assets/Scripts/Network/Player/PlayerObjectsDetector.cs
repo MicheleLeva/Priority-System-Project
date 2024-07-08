@@ -174,11 +174,6 @@ namespace Network.Player {
             HashSet<int> selected = frustumCollidingObjectsIds;
             if (selected.Count() > 0)
             {
-                /*
-                if (selected.Count() > sendToQueueMax)
-                    selected = selected.Take(sendToQueueMax)
-                        .ToHashSet();
-                */
 
                 List<NetObject> visibleNetObjects = selected.
                 Where(k => ServerObjectsLoader.netObjects.ContainsKey(k)).Select(k => ServerObjectsLoader.netObjects[k]).ToList();
@@ -334,18 +329,6 @@ namespace Network.Player {
                 {
                     o.inFrustum = false;
                     frustumCollidingObjectsIds.Remove(o.id);
-
-                    /*
-                    var playerPos = NetworkManager.Singleton.ConnectedClients[_clientId].PlayerObject.transform.GetChild(0)
-                    .position;
-                    var objPos = o.GetComponent<MeshRenderer>().bounds.ClosestPoint(playerPos);
-                    var distance = (objPos - playerPos).magnitude;
-                    double distancePercentage = distance / longestDistance;
-
-                    int priority = Priority.highestPriority + Priority.CalcWithDistance(distancePercentage);
-                    ServerObjectsLoader.netObjects[o.id].priority = priority;
-                    _objectQueue.UpdatePriority(_clientId, ServerObjectsLoader.netObjects[o.id].gameObject, priority);
-                    */
                 }
                     
             }
@@ -519,14 +502,18 @@ namespace Network.Player {
 
 #if UNITY_EDITOR
         void OnDrawGizmosSelected() {
-            var position = transform.position;
-            Handles.color = (_level) switch {
-                0 => Color.green,
-                1 => Color.yellow,
-                2 => Color.red,
-                _ => Color.white
-            };
-            Handles.DrawWireDisc(position, Vector3.up, radius);
+            if (priorityType.Equals(Prefs.PriorityType.CircularAreasOfInterest))
+            {
+                var position = transform.position;
+                Handles.color = (_level) switch
+                {
+                    0 => Color.green,
+                    1 => Color.yellow,
+                    2 => Color.red,
+                    _ => Color.white
+                };
+                Handles.DrawWireDisc(position, Vector3.up, radius);
+            }
         }
 #endif
     }
