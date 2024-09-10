@@ -6,8 +6,8 @@ import pandas as pd
 import sys
 import os
 
-root = f"hdrvdp-3.0.7\\test_move"
-#root = f"hdrvdp-3.0.7\\test_oculus"
+#root = f"hdrvdp-3.0.7\\test_move"
+root = f"hdrvdp-3.0.7\\test_oculus"
 
 def barplot(i, SP, AOI):
     # set width of bar 
@@ -55,6 +55,15 @@ def barplot(i, SP, AOI):
     #plt.legend()
     #plt.show()
 
+    #SP_average = sum(SP) / len(SP)
+    #AOI_average = sum(AOI) / len(AOI)
+    SP_occurrences = len([x for x in SP if x > 0])
+    AOI_occurrences = len([x for x in AOI if x > 0])
+    SP_average = sum(SP) / SP_occurrences
+    AOI_average = sum(AOI) / AOI_occurrences
+
+    data.append([SP_average, AOI_average, SP_occurrences, AOI_occurrences])
+
     # out
     fig = plt.gcf()
     #fig.set_size_inches(7, 5)
@@ -62,6 +71,8 @@ def barplot(i, SP, AOI):
         os.mkdir(f'Test{test_number}')
     out = f'Test{test_number}\\DetectionDifference-{i}Mbps-hdr-vdp.png'
     print(f"--> OUTPUT: {out}\n")
+    #print(f"    SP Average: {SP_average}  AOI Average: {AOI_average}\n")
+    #print(f"    SP Occurrences: {SP_occurrences}  AOI Occurrences: {AOI_occurrences}\n")
     fig.savefig(out, dpi=100)
     plt.clf()
 
@@ -95,9 +106,18 @@ def dir_process(dir: str, dir1: str, i: int):
     barplot(i, z, z1)
 
 if __name__ == "__main__":
-    for i in [4, 10, 20, 40]:
-        test_number = sys.argv[1]
+    test_number = sys.argv[1]
+
+    bandwidths = [4, 10, 20, 40]
+    numbers = ["SP average", "AOI average", "SP occurrences", "AOI occurrences"]
+    data = []
+
+    for i in bandwidths:
         dir = root + f"\\Test-{test_number}-SP\\{i}\\"
-        #dir1 = root + f"\\Test-AOI\\{i}\\"
         dir1 = root + f"\\Test-AOI\\{i}\\"
         dir_process(dir, dir1, i)
+
+    df = pd.DataFrame(data, columns=numbers, index=bandwidths)
+    print(data)
+    print(df)
+    df.to_excel(f"Test{test_number}\\DetectionDifference-Table.xlsx")   
