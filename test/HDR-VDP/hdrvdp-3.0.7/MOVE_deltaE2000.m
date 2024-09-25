@@ -1,7 +1,7 @@
 function X = MOVE_deltaE2000 ()
 
-root = "test_move";
-dirs = [root+"/Test-2-SP", root+"/Test-AOI"];
+root = "test_oculus";
+dirs = [root+"/Test-1-SP", root+"/Test-AOI"];
 %dirs = [root+"/Test-1-SP"];
 %dirs = [root+"/Test-AOI"];
 fullDir = root+"/FullMoving";
@@ -34,7 +34,7 @@ for i = 1:length(dirs)
         for j = 1:length(imgs)
             file = d + "/" + imgs(j);
             disp(file);
-            img = imread(file);
+            img = double(imread(file));
             diff = imcolordiff(img, fulls{j}, "Standard", "CIEDE2000",'kL',2,'K1',0.048,'K2',0.014);
             imagesc(diff);
             clim([0,100]);

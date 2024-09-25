@@ -6,8 +6,8 @@ import pandas as pd
 import sys
 import os
 
-#root = f"hdrvdp-3.0.7\\test_move"
-root = f"hdrvdp-3.0.7\\test_oculus"
+root = f"hdrvdp-3.0.7\\test_move"
+#root = f"hdrvdp-3.0.7\\test_oculus"
 
 def barplot(i, SP, AOI):
     # set width of bar 
@@ -20,7 +20,7 @@ def barplot(i, SP, AOI):
 
     ax = plt.gca()
     #ax.set_ylim([0, 5])
-    ax.set_yscale('log')
+    #ax.set_yscale('log')
      
     # Set position of bar on X axis 
     br1 = np.arange(len(SP)) 
@@ -39,8 +39,8 @@ def barplot(i, SP, AOI):
     plt.title(f"∆E 2000 Difference between SP and AOI for {i} Mbps", fontweight ='bold', fontsize = 15)
 
     #adding labels
-    plt.xlabel('Screenshot', fontweight ='bold', fontsize = 15) 
-    plt.ylabel('Percentage Points', fontweight ='bold', fontsize = 15) 
+    plt.xlabel('Frame', fontweight ='bold', fontsize = 15) 
+    plt.ylabel('∆E 2000 Units', fontweight ='bold', fontsize = 15) 
 
     # Adding Xticks 
     #plt.xticks([r + barWidth for r in range(len(SP))], [a for a in range(len(SP))])

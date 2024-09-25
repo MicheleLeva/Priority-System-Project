@@ -6,8 +6,8 @@ import pandas as pd
 import sys
 import os
 
-#root = f"hdrvdp-3.0.7\\test_move"
-root = f"hdrvdp-3.0.7\\test_oculus"
+root = f"hdrvdp-3.0.7\\test_move"
+#root = f"hdrvdp-3.0.7\\test_oculus"
 
 def barplot(i, SP, AOI):
     # set width of bar 
@@ -39,7 +39,7 @@ def barplot(i, SP, AOI):
     plt.title(f"Detection Difference between SP and AOI for {i} Mbps", fontweight ='bold', fontsize = 15)
 
     #adding labels
-    plt.xlabel('Screenshot', fontweight ='bold', fontsize = 15) 
+    plt.xlabel('Frame', fontweight ='bold', fontsize = 15) 
     plt.ylabel('Percentage Points', fontweight ='bold', fontsize = 15) 
 
     # Adding Xticks 
